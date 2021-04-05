@@ -6,14 +6,23 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="./styles/style.css">
+    <link rel="stylesheet" href="styles/styles.css">
 </head>
 
 <body>
 
-    <div id="game-board">
-        <canvas id="canvas" width="600" height="800"></canvas>
+    <div class="game-intro">
+        <img src="img/Dogger-logo.png" alt="" class="logo-img" />
+        <br />
+        <button id="start-button">StartGame</button>
     </div>
+
+    <div id="game-board">
+        <canvas id="myCanvas"></canvas>
+
+    </div>
+
+
 
     <script src="./js/doggy.js"></script>
     <script src="./js/obstacles.js"></script>

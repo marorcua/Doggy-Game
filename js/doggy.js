@@ -1,9 +1,10 @@
 class Doggy {
-    constructor(ctx, canvas, canvasSize, frameCount) {
+    constructor(ctx, canvas, canvasSize, frameCount, currentLoopIndex) {
         this.ctx = ctx
         this.canvas = canvas
         this.canvasSize = canvasSize
         this.frameCount = frameCount
+        this.currentLoopIndex = currentLoopIndex
 
         this.scale = 1.0
         this.doggyWidth = 48
@@ -13,6 +14,22 @@ class Doggy {
         this.scaledHeight = this.doggyHeight * this.scale
 
         this.doggyImage = undefined
+
+        this.keyPresses = {}
+        this.gameKeys = ["ArrowRight", "ArrowUp", "ArrowDown", "ArrowLeft"]
+
+        this.frameLimit = 8
+        this.currentDirection = 0
+        this.MOVEMENT_SPEED = 1.3
+        this.doggyPositionX = this.canvasSize.w / 2
+        this.doggyPositionY = this.canvasSize.h - this.doggyHeight * 3
+        this.doggyDown = 0
+        this.doggyLeft = 1
+        this.doggyRight = 2
+        this.doggyUp = 3
+        this.doggyIni = this.doggyDown
+        this.doggyMovement = false
+
 
         this.cycleLoop = [0, 1, 0, 2]
         this.frameCount = 0
@@ -24,7 +41,8 @@ class Doggy {
     init() {
         this.doggyImage = new Image()
         this.doggyImage.src = "./Images/dog_scottie.png"
-
+        this.setEventListeners()
+        this.drawDoggyFrame()
     }
 
     drawDoggyFrame(frameX, frameY, canvasX, canvasY) {
@@ -33,6 +51,57 @@ class Doggy {
             frameX * this.doggyWidth, frameY * this.doggyHeight, this.doggyWidth, this.doggyHeight,
             canvasX, canvasY, this.scaledWidth, this.scaledHeight);
 
+    }
+
+    setEventListeners() {
+
+        document.onkeydown = e => {
+            this.gameKeys.forEach(elm => {
+                if (e.key === elm) {
+                    this.keyPresses[e.key] = true
+                }
+            });
+        }
+
+        document.onkeyup = e => {
+            this.gameKeys.forEach(elm => {
+                if (e.key === elm) {
+                    this.keyPresses[e.key] = false
+                }
+            });
+        }
+
+    }
+
+    movement(currentLoopIndex) {
+
+        this.doggyMovement = false
+        console.log(currentLoopIndex);
+
+        if (this.keyPresses.ArrowUp) {
+            this.doggyPositionY -= this.MOVEMENT_SPEED;
+            this.currentDirection = this.doggyUp;
+            this.doggyMovement = true
+
+        } else if (this.keyPresses.ArrowDown) {
+            this.doggyPositionY += this.MOVEMENT_SPEED;
+            this.currentDirection = this.doggyDown;
+            this.doggyMovement = true
+        }
+        if (this.keyPresses.ArrowLeft) {
+            this.doggyPositionX -= this.MOVEMENT_SPEED;
+            this.currentDirection = this.doggyLeft;
+            this.doggyMovement = true
+
+        } else if (this.keyPresses.ArrowRight) {
+            this.doggyPositionX += this.MOVEMENT_SPEED;
+            this.currentDirection = this.doggyRight;
+            this.doggyMovement = true
+
+        }
+
+        console.log(this.currentLoopIndex);
+        this.drawDoggyFrame(this.cycleLoop[currentLoopIndex], this.currentDirection, this.doggyPositionX, this.doggyPositionY)
 
     }
 
@@ -42,8 +111,10 @@ class Doggy {
 
         this.ctx.clearRect(0, 0, this.canvasSize.w, this.canvasSize.h);
         this.drawDoggyFrame(0, 0, 0, 0)
-
     }
+
+
+
 }
 
 

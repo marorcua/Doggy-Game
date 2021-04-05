@@ -1,8 +1,18 @@
+
+class Obstacles {
+
+}
+
 // let carImg = new Image()
 // carImg.src = "./Images/car-truck1.png"
 // carImg.onload = function () {
 //     draw()
 // }
+
+
+
+
+
 
 // //canvas = document.querySelector('canvas')
 // //ctx = canvas.getContext('2d')

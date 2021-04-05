@@ -1,7 +1,7 @@
 class DoggyBoardGame {
 
     constructor(ctx, canvas, canvasSize) {
-        this.canvasDom = canvas
+        this.canvas = canvas
         this.ctx = ctx
         this.canvasSize = canvasSize
         console.log(this.canvasSize);
@@ -72,11 +72,11 @@ class DoggyBoardGame {
 
     drawBoard() {
 
-        doggyApp.ctx.fillRect(5, 5, doggyApp.canvasSize.w, doggyApp.canvasSize.h,)
-        doggyApp.ctx.fillStyle = 'black'
+        this.ctx.fillRect(5, 5, this.canvasSize.w, this.canvasSize.h,)
+        this.ctx.fillStyle = 'black'
 
-        doggyApp.ctx.fillRect(5, 600, doggyApp.canvasSize.w, doggyApp.canvasSize.h / 2 - 100)
-        doggyApp.ctx.fillStyle = 'grey'
+        this.ctx.fillRect(5, 600, this.canvasSize.w, this.canvasSize.h / 2 - 100)
+        this.ctx.fillStyle = 'grey'
 
     }
 

@@ -20,7 +20,7 @@ class Doggy {
 
         this.frameLimit = 8
         this.currentDirection = 0
-        this.MOVEMENT_SPEED = 1.3
+        this.MOVEMENT_SPEED = 1.4
         this.doggyPositionX = this.canvasSize.w / 2
         this.doggyPositionY = this.canvasSize.h - this.doggyHeight * 3
         this.doggyDown = 0

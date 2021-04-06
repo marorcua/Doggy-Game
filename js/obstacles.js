@@ -1,67 +1,94 @@
 
 class Obstacles {
-    constructor(ctx, canvasSize) {
+    constructor(ctx, canvasSize, vehiclePosX, vehiclePosY, vehicleWidth, vehicleHeight, imageSrc, speed, reverse) {
         this.ctx = ctx
         this.canvasSize = canvasSize
+        this.vehiclePosX = vehiclePosX
+        this.vehiclePosY = vehiclePosY
+        this.vehicleWidth = vehicleWidth
+        this.vehicleHeight = vehicleHeight
+        this.imageSrc = imageSrc
+        this.speed = speed
 
-        this.vel = 10
-        this.carImageInstance = undefined
-        this.carPosX = 480
-        this.carPosY = 300
-        this.carWidth = 40
-        this.carHeight = 100
+        this.reverse = reverse
+        this.obstacleImageInstance = undefined
+
 
         this.init()
     }
 
     init() {
-        this.carImageInstance = new Image()
-        this.carImageInstance.src = './Images/car-truck1.png'
+        this.obstacleImageInstance = new Image()
+        this.obstacleImageInstance.src = this.imageSrc
         this.draw()
     }
 
     draw() {
-        this.ctx.save()
+        if (this.reverse) {
+            this.ctx.save()
+            this.ctx.translate(this.vehiclePosX, this.vehiclePosY)
+            this.ctx.rotate(Math.PI)
+            this.ctx.drawImage(this.obstacleImageInstance, this.vehiclePosX, this.vehiclePosY, this.vehicleWidth, this.vehicleHeight)
+            this.ctx.restore()
+        } else {
+            this.ctx.drawImage(this.obstacleImageInstance, this.vehiclePosX, this.vehiclePosY, this.vehicleWidth, this.vehicleHeight)
+        }
+        //Rotation method:
+        //this.ctx.save()
         //this.ctx.translate(this.carPosX, this.carPosY)
-        this.ctx.rotate(Math.PI / 2)
-        this.ctx.drawImage(this.carImageInstance, this.carPosX, this.carPosY, this.carWidth, this.carHeight)
+        //this.ctx.rotate(Math.PI / 2)
+        //this.ctx.drawImage(this.obstacleImageInstance, this.vehiclePosX, this.vehiclePosY, this.vehicleWidth, this.vehicleHeight)
         // this.ctx.rotate(-Math.PI / 2)
-        this.ctx.restore()
+        //this.ctx.restore()
 
     }
 
     move() {
-
-        this.carPosY -= 3
+        this.vehiclePosX += this.speed
         this.draw()
 
     }
+}
 
+const carObstacle = {
+    imageSrc: './Images/car-truck1.png',
+    imageSrcRev: './Images/car-truck1-reverse.png',
+    vehicleHeight: 28,
+    vehicleWidth: 54,
+    speed: 2.5,
+    vehDown: .76,
+    vehUp: .42,
 
 }
 
-// let carImg = new Image()
-// carImg.src = "./Images/car-truck1.png"
-// carImg.onload = function () {
-//     draw()
-// }
+const truckObstacle = {
+    imageSrc: './Images/car-truck5.png',
+    vehicleHeight: 32,
+    vehicleWidth: 109,
+    speed: 1,
+    vehDown: .55,
+    vehUp: .35,
+}
+
+const sTruckObstacle = {
+    imageSrc: './Images/car-truck3.png',
+    imageSrcRev: './Images/car-truck3-reverse.png',
+    vehicleHeight: 28,
+    vehicleWidth: 69,
+    speed: 1.6,
+    vehDown: .63,
+    vehUp: .22,
+}
+
+const racingObstacle = {
+    imageSrc: './Images/GalardB.png',
+    imageSrcRev: './Images/GalardB-reverse.png',
+    vehicleHeight: 35,
+    vehicleWidth: 63,
+    speed: 5,
+    vehDown: .70,
+    vehUp: .28,
+}
 
 
 
-
-
-
-// //canvas = document.querySelector('canvas')
-// //ctx = canvas.getContext('2d')
-
-
-// function draw() {
-//     console.log("aqui")
-
-//     ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-//     ctx.fillRect(250, 250, 50, 30)
-
-//     //requestAnimationFrame(draw)
-//     //this.move()
-// }

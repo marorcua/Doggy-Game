@@ -30,6 +30,7 @@ const doggyApp = {
     gameKeys: ["ArrowRight", "ArrowUp", "ArrowDown", "ArrowLeft"],
 
     obstacle: [],
+    obstacleTruck: [],
 
     doggy: undefined,
 
@@ -42,6 +43,7 @@ const doggyApp = {
         //this.setEventListeners()
         this.createDoggy()
         this.createObstacle()
+        this.createObstacleTruck()
         this.start()
 
     },
@@ -83,14 +85,23 @@ const doggyApp = {
 
             this.clear()
 
-            if (this.gameFramesCount % 90 === 0) {
+            if (this.gameFramesCount % 110 === 0) {
                 this.createObstacle()
-                console.log(this.obstacle);
+                this.createObstacleReverse()
+                //console.log(this.obstacle);
+            }
+
+            if (this.gameFramesCount % 300 === 0) {
+                this.createObstacleTruck()
+                console.log(this.obstacleTruck);
             }
 
             this.doggyBoardGame.boardGameStart()
             this.doggy.movement(this.currentLoopIndex)
             this.obstacle.forEach(elm => {
+                elm.move()
+            });
+            this.obstacleTruck.forEach(elm => {
                 elm.move()
             });
 
@@ -108,16 +119,13 @@ const doggyApp = {
                 }
             }
 
-            //this.throwCar()
-
-
         }, 1000 / this.FPS)
     },
 
     reset() {
         this.boardGame = new DoggyBoardGame(this.ctx, this.canvas, this.canvasSize)
         this.doggy = new Doggy(this.ctx, this.canvas, this.canvasSize, this.fram, this.current)
-        this.obstacle = new Obstacles(this.ctx)
+        //this.obstacle = new Obstacles(this.ctx)
     },
 
     clear() {
@@ -165,18 +173,48 @@ const doggyApp = {
 
     createObstacle() {
         this.throwCar()
-        const obstacle = new Obstacles(this.ctx, this.canvasSize)
-        this.obstacle.push(obstacle)
-        //this.throwCar()
+        //normal car
+        const obstacle2 = new Obstacles(this.ctx, this.canvasSize, -10, carObstacle.vehDown * this.canvasSize.h, carObstacle.vehicleWidth, carObstacle.vehicleHeight, carObstacle.imageSrc, carObstacle.speed, false)
 
+        //racing car
+        const obstacle7 = new Obstacles(this.ctx, this.canvasSize, -10, racingObstacle.vehUp * this.canvasSize.h, racingObstacle.vehicleWidth, racingObstacle.vehicleHeight, racingObstacle.imageSrc, racingObstacle.speed, false)
+
+        this.obstacle.push(obstacle2, obstacle7)
+    },
+    createObstacleTruck() {
+        // truck and small truck
+        const obstacle3 = new Obstacles(this.ctx, this.canvasSize, -10, truckObstacle.vehUp * this.canvasSize.h, truckObstacle.vehicleWidth, truckObstacle.vehicleHeight, truckObstacle.imageSrc, truckObstacle.speed, false)
+        const obstacle4 = new Obstacles(this.ctx, this.canvasSize, -10, truckObstacle.vehDown * this.canvasSize.h, truckObstacle.vehicleWidth, truckObstacle.vehicleHeight, truckObstacle.imageSrc, truckObstacle.speed, false)
+        const obstacle5 = new Obstacles(this.ctx, this.canvasSize, -10, sTruckObstacle.vehUp * this.canvasSize.h, sTruckObstacle.vehicleWidth, sTruckObstacle.vehicleHeight, sTruckObstacle.imageSrc, sTruckObstacle.speed, false)
+        //small truck car
+        const obstacle6R = new Obstacles(this.ctx, this.canvasSize, this.canvasSize.w, sTruckObstacle.vehDown * this.canvasSize.h, sTruckObstacle.vehicleWidth, sTruckObstacle.vehicleHeight, sTruckObstacle.imageSrcRev, -sTruckObstacle.speed, false)
+
+        this.obstacle.push(obstacle5)
+        this.obstacleTruck.push(obstacle3, obstacle4, obstacle6R)
+    },
+    createObstacleReverse() {
+        //normal car
+        const obstacle1R = new Obstacles(this.ctx, this.canvasSize, this.canvasSize.w, carObstacle.vehUp * this.canvasSize.h, carObstacle.vehicleWidth, carObstacle.vehicleHeight, carObstacle.imageSrcRev, -carObstacle.speed, false)
+        //racing car
+        const obstacle8R = new Obstacles(this.ctx, this.canvasSize, this.canvasSize.w, racingObstacle.vehDown * this.canvasSize.h, racingObstacle.vehicleWidth, racingObstacle.vehicleHeight, racingObstacle.imageSrcRev, -racingObstacle.speed, false)
+
+        this.obstacle.push(obstacle1R, obstacle8R)
     },
 
     throwCar() {
         this.obstacle.forEach(elm => {
-            if (-elm.carPosY >= 1000) {
+            if (elm.vehiclePosX >= 1000 ||
+                elm.vehiclePosX <= -100) {
                 this.obstacle.shift()
             }
         });
+        this.obstacleTruck.forEach(elm => {
+            if (elm.vehiclePosX >= 1000 ||
+                elm.vehiclePosX <= -300) {
+                this.obstacleTruck.shift()
+            }
+        });
+
         //WTF:
         // this.obstacle = this.obstacle.filter(elm => {
         //     console.log(elm.carPosY);

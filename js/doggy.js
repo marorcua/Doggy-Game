@@ -76,7 +76,6 @@ class Doggy {
     movement(currentLoopIndex) {
 
         this.doggyMovement = false
-        console.log(currentLoopIndex);
 
         if (this.keyPresses.ArrowUp) {
             this.doggyPositionY -= this.MOVEMENT_SPEED;
@@ -100,7 +99,6 @@ class Doggy {
 
         }
 
-        console.log(this.currentLoopIndex);
         this.drawDoggyFrame(this.cycleLoop[currentLoopIndex], this.currentDirection, this.doggyPositionX, this.doggyPositionY)
 
     }

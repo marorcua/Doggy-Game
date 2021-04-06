@@ -31,8 +31,10 @@ const doggyApp = {
 
     obstacle: [],
     obstacleTruck: [],
+    puppiesArray: [],
 
     doggy: undefined,
+    livesCounter: 0,
 
     init() {
         this.canvas = document.getElementById("myCanvas")
@@ -45,6 +47,8 @@ const doggyApp = {
         this.createObstacle()
         this.createObstacleTruck()
         this.start()
+        this.kill()
+        this.drawLives2()
 
     },
 
@@ -104,10 +108,12 @@ const doggyApp = {
             this.obstacleTruck.forEach(elm => {
                 elm.move()
             });
-
+            this.collision()
+            this.success()
+            this.kill()
+            this.drawLives2()
 
             if (this.doggy.doggyMovement) {
-                console.log(this.doggy.doggyMovement);
                 this.frameCount++
 
                 if (this.frameCount % 8 === 0) {
@@ -180,6 +186,7 @@ const doggyApp = {
         const obstacle7 = new Obstacles(this.ctx, this.canvasSize, -10, racingObstacle.vehUp * this.canvasSize.h, racingObstacle.vehicleWidth, racingObstacle.vehicleHeight, racingObstacle.imageSrc, racingObstacle.speed, false)
 
         this.obstacle.push(obstacle2, obstacle7)
+       
     },
     createObstacleTruck() {
         // truck and small truck
@@ -191,6 +198,7 @@ const doggyApp = {
 
         this.obstacle.push(obstacle5)
         this.obstacleTruck.push(obstacle3, obstacle4, obstacle6R)
+        
     },
     createObstacleReverse() {
         //normal car
@@ -199,6 +207,7 @@ const doggyApp = {
         const obstacle8R = new Obstacles(this.ctx, this.canvasSize, this.canvasSize.w, racingObstacle.vehDown * this.canvasSize.h, racingObstacle.vehicleWidth, racingObstacle.vehicleHeight, racingObstacle.imageSrcRev, -racingObstacle.speed, false)
 
         this.obstacle.push(obstacle1R, obstacle8R)
+        
     },
 
     throwCar() {
@@ -215,16 +224,111 @@ const doggyApp = {
             }
         });
 
-        //WTF:
-        // this.obstacle = this.obstacle.filter(elm => {
-        //     console.log(elm.carPosY);
-        //     -elm.carPosY >= 500
-        // })
-        //console.log(this.obstacle);
+        
+    },
+    endGame(){
+        this.kill()
+        this.success()
+        
+
+    },
+    kill(){
+        
+        if(this.doggy.doggyPositionX + this.doggy.scaledWidth >= this.canvasSize.w  || this.doggy.doggyPositionX <= 0){
+           this.loseLives()
+        } 
+        if(this.doggyBoardGame.moveTime() === false){
+            this.gameOver()
+        } 
+
     },
 
-    // drawDoggy() {
-    //     this.doggy.drawDoggyFrame(this.doggy.cycleLoop[this.currentLoopIndex], this.currentDirection, this.doggyPositionX, this.doggyPositionY);
-    // },
+    loseLives(){
+        this.livesCounter++
+        this.livesCounter === 7 ? console.log("pringao"): this.gameOver()   
+        
+   
+    },
+    drawLives2(){
+        this.doggyBoardGame.lives = this.doggyBoardGame.livesArray.filter((elm) => {
+            let counter = this.livesCounter
+            let lifes = 6 - counter
+            return (this.doggyBoardGame.livesArray.indexOf(elm) <= lifes)
+        }) 
+       this.doggyBoardGame.lives.forEach(elm => elm.draw())
+    },
+    collision(){
+       
+        this.obstacle.forEach(elm => {
+            if ((elm.vehiclePosY + elm.vehicleHeight) > (this.doggy.doggyPositionY + 15)
+                && (elm.vehiclePosY) < (this.doggy.doggyPositionY - 15 + this.doggy.scaledHeight)
+                && (elm.vehiclePosX) < (this.doggy.doggyPositionX - 20 + this.doggy.scaledWidth)
+                && (elm.vehiclePosX + elm.vehicleWidth) > (this.doggy.doggyPositionX + 20)) {
+                   this.loseLives()
+            }
+        });
+
+        this.obstacleTruck.forEach(elm => {
+            if ((elm.vehiclePosY + elm.vehicleHeight) > (this.doggy.doggyPositionY + 15)
+                && (elm.vehiclePosY) < (this.doggy.doggyPositionY - 15 + this.doggy.scaledHeight)
+                && (elm.vehiclePosX) < (this.doggy.doggyPositionX - 20 + this.doggy.scaledWidth)
+                && (elm.vehiclePosX + elm.vehicleWidth) > (this.doggy.doggyPositionX + 20)) {
+                    this.loseLives()
+            }
+        });
+
+        if ((110 + 35) > (this.doggy.doggyPositionY + 15)
+            && (110) < (this.doggy.doggyPositionY - 15 + this.doggy.scaledHeight)
+            && 
+            (((5) < (this.doggy.doggyPositionX - 20 + this.doggy.scaledWidth) 
+            && (5 + 60) > (this.doggy.doggyPositionX + 20)) || 
+            ((110) < (this.doggy.doggyPositionX - 20 + this.doggy.scaledWidth)
+                && (110 + 60) > (this.doggy.doggyPositionX + 20)) ||
+            ((220) < (this.doggy.doggyPositionX - 20 + this.doggy.scaledWidth)
+                && (220 + 60) > (this.doggy.doggyPositionX + 20)) ||
+            ((330) < (this.doggy.doggyPositionX - 20 + this.doggy.scaledWidth)
+                && (330 + 60) > (this.doggy.doggyPositionX + 20)) ||
+            ((440) < (this.doggy.doggyPositionX - 20 + this.doggy.scaledWidth)
+                && (440 + 60) > (this.doggy.doggyPositionX + 20)) ||
+            ((550) < (this.doggy.doggyPositionX - 20 + this.doggy.scaledWidth)
+                && (550 + 60) > (this.doggy.doggyPositionX + 20)))  
+                
+                ) {
+                    this.loseLives()
+        }
+
+
+    },
+    success(){
+        if ((90 + 30) > (this.doggy.doggyPositionY + 30)){
+           this.successImage()
+           this.gameOver()
+        }
+           
+    },
+    successImage(){
+
+        this.imageInstance = new Image()
+        this.imageInstance.src = 'Images/dog_recolor.png'
+        const puppy = this.ctx.drawImage(this.imageInstance, 0, 0, 50, 50, 120, 100, 50, 50)
+
+         this.puppiesArray.push(puppy)
+         console.log(this.puppiesArray);
+    },
+    gameOver(){
+
+      clearInterval(this.interval)
+        this.obstacle = []
+        this.obstacleTruck = []
+        this.frameCount = 0
+        this.currentLoopIndex = 0
+        this.frameCount = 0
+        this.gameFramesCount = 0
+        this.init()
+
+    },
+
+
+
 
 }

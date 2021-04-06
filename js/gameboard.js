@@ -4,11 +4,12 @@ class DoggyBoardGame {
         this.canvas = canvas
         this.ctx = ctx
         this.canvasSize = canvasSize
-        console.log(this.canvasSize);
         this.lines = []
         this.timeLine = 105
         this.framesCounter = 0
         this.lives = []
+        this.livesArray =[]
+
 
         this.boardGameInit()
     }
@@ -37,7 +38,7 @@ class DoggyBoardGame {
 
         this.moveTime()
 
-        this.drawLives()
+        //this.lives.forEach(elm => elm.draw())
 
         // this.drawTime.moveTime()
 
@@ -51,7 +52,8 @@ class DoggyBoardGame {
         this.drawStones()
         this.drawText()
         this.drawTime()
-
+        this.drawLives()
+        
     }
 
 
@@ -174,9 +176,28 @@ class DoggyBoardGame {
 
     drawLives() {
 
-        const live1 = new Live(this.ctx, 'img/dog-bone.jpg', 400, 60, 40, 40)
-        this.lives.push(live1)
+        const live1 = new Live(this.ctx, 'Images/dog-live.png', 330, 43, 30, 20)
+        const live2 = new Live(this.ctx, 'Images/dog-live.png', 360, 43, 30, 20)
+        const live3 = new Live(this.ctx, 'Images/dog-live.png', 390, 43, 30, 20)
+        const live4 = new Live(this.ctx, 'Images/dog-live.png', 420, 43, 30, 20)
+        const live5 = new Live(this.ctx, 'Images/dog-live.png', 450, 43, 30, 20)
+        const live6 = new Live(this.ctx, 'Images/dog-live.png', 480, 43, 30, 20)
+        const live7 = new Live(this.ctx, 'Images/dog-live.png', 510, 43, 30, 20)
+        
+        this.livesArray = [live1, live2, live3, live4, live5, live6, live7]
 
+        // this.lives = livesArray.filter((elm, ind) =>{
+        //     let counter = 5
+        //     let lifes = 6 - counter 
+        //    return (livesArray.indexOf(elm) <= lifes)
+        // })
+        // console.log(this.lives);
+
+        // this.lives.forEach(elm => elm.draw())
+
+
+        // console.log(live1)
+       
     }
     clearScreen() {
         this.ctx.clearRect(0, 0, this.canvasSize.w, this.canvasSize.h)
@@ -223,8 +244,7 @@ class Live {
         this.bonesSize = { w: bonesW, h: bonesH }
         this.bonesImages = bonesImage
         this.init()
-        this.draw()
-
+        //this.draw()
 
 
     }

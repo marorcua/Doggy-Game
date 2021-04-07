@@ -83,7 +83,7 @@ class Doggy {
             this.doggyMovement = true
 
         } else if (this.keyPresses.ArrowDown) {
-            this.doggyPositionY += this.MOVEMENT_SPEED;
+            this.doggyPositionY >= ( .8 * this.canvasSize.h ) ? null : this.doggyPositionY += this.MOVEMENT_SPEED;
             this.currentDirection = this.doggyDown;
             this.doggyMovement = true
         }

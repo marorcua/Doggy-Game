@@ -18,6 +18,14 @@ class DoggyBoardGame {
         //this.boardGameStart()
         this.drawBoard()
         this.drawLines()
+        this.lines.forEach(elm => elm.draw())
+        this.drawGrass()
+        this.drawLava()
+        this.drawStones()
+        this.drawText()
+        this.drawTime()
+        this.drawLives()
+
     }
 
     // setCanvasSize() {
@@ -33,10 +41,10 @@ class DoggyBoardGame {
     boardGameStart() {
 
         this.framesCounter++
-        this.clearScreen()
-        this.drawAll()
 
+        this.drawAll()
         this.moveTime()
+
 
         //this.lives.forEach(elm => elm.draw())
 
@@ -58,26 +66,26 @@ class DoggyBoardGame {
 
 
     drawLines() {
-        const line1 = new Line(this.ctx, 599, 50, 5, 50, 0, 0, 'black', 90)
-        const line2 = new Line(this.ctx, 599, 100, 5, 100, 0, 0, 'green', 20)
-        const line3 = new Line(this.ctx, 599, 189, 5, 189, 40, 60, 'white', 5)
-        const line4 = new Line(this.ctx, 599, 236, 5, 236, 0, 0, 'white', 5)
-        const line5 = new Line(this.ctx, 599, 245, 5, 245, 0, 0, 'white', 5)
-        const line6 = new Line(this.ctx, 599, 289, 5, 289, 40, 60, 'white', 5)
-        const line7 = new Line(this.ctx, 599, 390, 5, 390, 0, 0, 'white', 5)
-        const line8 = new Line(this.ctx, 599, 434, 5, 434, 40, 60, 'white', 5)
-        const line9 = new Line(this.ctx, 599, 480, 5, 480, 0, 0, 'white', 5)
-        const line10 = new Line(this.ctx, 599, 489, 5, 489, 0, 0, 'white', 5)
-        const line11 = new Line(this.ctx, 599, 530, 5, 530, 40, 60, 'white', 5)
+        const line1 = new Line(this.ctx, 599, 0, 0, 0, 0, 0, 'black', 178)
+        const line2 = new Line(this.ctx, 599, 100, 0, 100, 0, 0, 'green', 20)
+        const line3 = new Line(this.ctx, 599, 189, 0, 189, 40, 60, 'white', 5)
+        const line4 = new Line(this.ctx, 599, 236, 0, 236, 0, 0, 'white', 5)
+        const line5 = new Line(this.ctx, 599, 245, 0, 245, 0, 0, 'white', 5)
+        const line6 = new Line(this.ctx, 599, 289, 0, 289, 40, 60, 'white', 5)
+        const line7 = new Line(this.ctx, 599, 390, 0, 390, 0, 0, 'white', 5)
+        const line8 = new Line(this.ctx, 599, 434, 0, 434, 40, 60, 'white', 5)
+        const line9 = new Line(this.ctx, 599, 480, 0, 480, 0, 0, 'white', 5)
+        const line10 = new Line(this.ctx, 599, 489, 0, 489, 0, 0, 'white', 5)
+        const line11 = new Line(this.ctx, 599, 530, 0, 530, 40, 60, 'white', 5)
         this.lines.push(line1, line2, line3, line4, line5, line6, line7, line8, line9, line10, line11)
     }
 
     drawBoard() {
 
-        this.ctx.fillRect(5, 5, this.canvasSize.w, this.canvasSize.h,)
+        this.ctx.fillRect(0, 5, this.canvasSize.w, this.canvasSize.h,)
         this.ctx.fillStyle = 'black'
 
-        this.ctx.fillRect(5, 600, this.canvasSize.w, this.canvasSize.h / 2 - 100)
+        this.ctx.fillRect(0, 600, this.canvasSize.w, this.canvasSize.h / 2 - 100)
         this.ctx.fillStyle = 'grey'
 
     }
@@ -85,66 +93,66 @@ class DoggyBoardGame {
     drawStones() {
         this.imageInstance = new Image()
         this.imageInstance.src = 'img/stones.png'
-        this.ctx.drawImage(this.imageInstance, 5, 90, 600, 30)
+        this.ctx.drawImage(this.imageInstance, 0, 90, 600, 30)
 
         this.imageInstance = new Image()
-        this.imageInstance.src = 'img/stones.png'
-        this.ctx.drawImage(this.imageInstance, 5, 355, 600, 30)
+        this.imageInstance.src = 'Images/sandDesert.jpg'
+        this.ctx.drawImage(this.imageInstance, 0, 355, 600, 30, )
 
     }
 
     drawGrass() {
         this.imageInstance = new Image()
         this.imageInstance.src = 'img/grass3.jpg'
-        this.ctx.drawImage(this.imageInstance, 5, 330, 600, 40)
+        this.ctx.drawImage(this.imageInstance, 0, 330, 600, 40)
 
         this.imageInstance = new Image()
         this.imageInstance.src = 'img/grass3.jpg'
-        this.ctx.drawImage(this.imageInstance, 5, 570, 600, 40)
+        this.ctx.drawImage(this.imageInstance, 0, 570, 600, 40)
 
     }
     drawLava() {
 
         this.imageInstance = new Image()
         this.imageInstance.src = 'img/lava2.jpg'
-        this.ctx.drawImage(this.imageInstance, 5, 110, 60, 35, 5, 110, 60, 35)
+        this.ctx.drawImage(this.imageInstance, 0, 110, 60, 35, 0, 110, 60, 35)
 
         this.imageInstance = new Image()
         this.imageInstance.src = 'img/lava2.jpg'
-        this.ctx.drawImage(this.imageInstance, 5, 110, 60, 35, 110, 110, 60, 35)
+        this.ctx.drawImage(this.imageInstance, 0, 110, 60, 35, 110, 110, 60, 35)
 
         this.imageInstance = new Image()
         this.imageInstance.src = 'img/lava2.jpg'
-        this.ctx.drawImage(this.imageInstance, 5, 110, 60, 35, 220, 110, 60, 35)
+        this.ctx.drawImage(this.imageInstance, 0, 110, 60, 35, 220, 110, 60, 35)
 
         this.imageInstance = new Image()
         this.imageInstance.src = 'img/lava2.jpg'
-        this.ctx.drawImage(this.imageInstance, 5, 110, 60, 35, 330, 110, 60, 35)
+        this.ctx.drawImage(this.imageInstance, 0, 110, 60, 35, 330, 110, 60, 35)
 
         this.imageInstance = new Image()
         this.imageInstance.src = 'img/lava2.jpg'
-        this.ctx.drawImage(this.imageInstance, 5, 110, 60, 35, 440, 110, 60, 35)
+        this.ctx.drawImage(this.imageInstance, 0, 110, 60, 35, 440, 110, 60, 35)
 
         this.imageInstance = new Image()
         this.imageInstance.src = 'img/lava2.jpg'
-        this.ctx.drawImage(this.imageInstance, 5, 110, 60, 35, 550, 110, 60, 35)
+        this.ctx.drawImage(this.imageInstance, 0, 110, 60, 35, 550, 110, 60, 35)
     }
 
 
     drawText() {
 
-        this.ctx.font = "20px Monaco"
-        this.ctx.fillText("SCORE: 00001 ", 40, 60)
+        this.ctx.font = "30px 'Fixedsys Excelsior 3.01'"
+        this.ctx.fillText("SCORE: 00001 ", 20, 60)
 
-        this.ctx.font = "20px Monaco"
-        this.ctx.fillText("LIVES:", 250, 60)
+        this.ctx.font = "30px 'Fixedsys Excelsior 3.01'"
+        this.ctx.fillText("LIVES:", 230, 60)
 
     }
 
     drawTime() {
 
-        this.ctx.font = "20px Monaco"
-        this.ctx.fillText("TIME: ", 40, 675)
+        this.ctx.font = "30px 'Fixedsys Excelsior 3.01'"
+        this.ctx.fillText("TIME: ", 25, 675)
 
         this.ctx.strokeStyle = 'blue'
         this.ctx.lineWidth = 30
@@ -176,13 +184,13 @@ class DoggyBoardGame {
 
     drawLives() {
 
-        const live1 = new Live(this.ctx, 'Images/dog-live.png', 330, 43, 30, 20)
-        const live2 = new Live(this.ctx, 'Images/dog-live.png', 360, 43, 30, 20)
-        const live3 = new Live(this.ctx, 'Images/dog-live.png', 390, 43, 30, 20)
-        const live4 = new Live(this.ctx, 'Images/dog-live.png', 420, 43, 30, 20)
-        const live5 = new Live(this.ctx, 'Images/dog-live.png', 450, 43, 30, 20)
-        const live6 = new Live(this.ctx, 'Images/dog-live.png', 480, 43, 30, 20)
-        const live7 = new Live(this.ctx, 'Images/dog-live.png', 510, 43, 30, 20)
+        const live1 = new Live(this.ctx, 'Images/dog-live.png', 330, 40, 30, 20)
+        const live2 = new Live(this.ctx, 'Images/dog-live.png', 360, 40, 30, 20)
+        const live3 = new Live(this.ctx, 'Images/dog-live.png', 390, 40, 30, 20)
+        const live4 = new Live(this.ctx, 'Images/dog-live.png', 420, 40, 30, 20)
+        const live5 = new Live(this.ctx, 'Images/dog-live.png', 450, 40, 30, 20)
+        const live6 = new Live(this.ctx, 'Images/dog-live.png', 480, 40, 30, 20)
+        const live7 = new Live(this.ctx, 'Images/dog-live.png', 510, 40, 30, 20)
 
         this.livesArray = [live1, live2, live3, live4, live5, live6, live7]
 
@@ -295,5 +303,73 @@ class Puppy {
     draw() {
         this.ctx.drawImage(this.puppyImageInstance, this.spriteRow, this.spriteColumn, 50, 50, this.puppyPosX, this.puppyPosY, 50, 50)
     }
+
+}
+
+class levelTwo extends DoggyBoardGame {
+    constructor(ctx, canvas, canvasSize) {
+        super(ctx, canvas, canvasSize)
+
+    }
+
+    boardGameInit() {
+        //this.boardGameStart()
+        this.drawBoard()
+        this.drawLines()
+        this.lines.forEach(elm => elm.draw())
+        this.drawGrass()
+        this.drawLava()
+        this.drawStones()
+        this.drawText()
+        this.drawTime()
+        this.drawLives()
+
+    }
+    drawAll() {
+        this.drawBoard()
+        this.lines.forEach(elm => elm.draw())
+        this.drawGrass()
+        this.drawWater()
+        this.drawSand()
+        this.drawLava()
+        this.drawStones()
+        this.drawText()
+        this.drawTime()
+        this.drawLives()
+
+    }
+    drawLines() {
+        const line1 = new Line(this.ctx, 599, 0, 0, 0, 0, 0, 'black', 178)
+        const line2 = new Line(this.ctx, 599, 100, 0, 100, 0, 0, 'green', 20)
+        const line7 = new Line(this.ctx, 599, 390, 0, 390, 0, 0, 'white', 5)
+        const line8 = new Line(this.ctx, 599, 434, 0, 434, 40, 60, 'white', 5)
+        const line9 = new Line(this.ctx, 599, 480, 0, 480, 0, 0, 'white', 5)
+        const line10 = new Line(this.ctx, 599, 489, 0, 489, 0, 0, 'white', 5)
+        const line11 = new Line(this.ctx, 599, 530, 0, 530, 40, 60, 'white', 5)
+        this.lines.push(line1, line2, line7, line8, line9, line10, line11)
+    }
+    drawBoard() {
+        this.ctx.fillStyle = 'black'
+        this.ctx.fillRect(0, 0, this.canvasSize.w, this.canvasSize.h)
+
+        this.ctx.fillStyle = 'grey'
+        this.ctx.fillRect(0, this.canvasSize.h / 2, this.canvasSize.w, this.canvasSize.h * .35)
+
+    }
+    drawSand(){
+        this.imageSand = new Image()
+        this.imageSand.src = 'Images/sandDesert.jpg'
+        this.ctx.drawImage(this.imageSand, 0, 110, this.canvasSize.w, 35)
+    }
+    drawWater() {
+        console.log('nkdnico');
+
+        this.imageWater = new Image()
+        this.imageWater.src = 'Images/waterSprite.jpg'
+        this.ctx.drawImage(this.imageWater, 0, 145, this.canvasSize.w, 190)
+
+    }
+
+
 
 }

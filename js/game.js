@@ -35,6 +35,7 @@ const doggyApp = {
 
     doggy: undefined,
     livesCounter: 0,
+    levelCounter: 0,
 
     init() {
         this.canvas = document.getElementById("myCanvas")
@@ -47,7 +48,7 @@ const doggyApp = {
         this.createObstacleTruck()
         this.drawSuccess()
         this.start()
-        this.kill()
+        this.canvasLimits()
         this.drawLives2()
 
     },
@@ -82,7 +83,11 @@ const doggyApp = {
 
     start() {
         //this.reset()
-
+        const puppy1 = new Puppy(this.ctx, this.canvas, this.canvasSize, this.frameCount, this.currentLoopIndex, 150, 0, 70, 105)
+        const puppy2 = new Puppy(this.ctx, this.canvas, this.canvasSize, this.frameCount, this.currentLoopIndex, 150, 200, 180, 105)
+        const puppy3 = new Puppy(this.ctx, this.canvas, this.canvasSize, this.frameCount, this.currentLoopIndex, 420, 200, 270, 105)
+        const puppy4 = new Puppy(this.ctx, this.canvas, this.canvasSize, this.frameCount, this.currentLoopIndex, 280, 200, 380, 105)
+        this.puppiesArray = [puppy1, puppy2, puppy3, puppy4]
         this.interval = setInterval(() => {
 
             this.gameFramesCount > 5000 ? this.gameFramesCount = 0 : this.gameFramesCount++
@@ -111,7 +116,7 @@ const doggyApp = {
             this.success()
             //this.successPosition()
             this.drawSuccess()
-            this.kill()
+            this.canvasLimits()
             this.drawLives2()
 
             if (this.doggy.doggyMovement) {
@@ -138,34 +143,6 @@ const doggyApp = {
     clear() {
         this.ctx.clearRect(0, 0, this.canvasSize.w, this.canvasSize.h)
     },
-
-    // movement() {
-
-    //     this.doggyMovement = false
-
-    //     if (doggyApp.keyPresses.ArrowUp) {
-    //         this.doggyPositionY -= this.MOVEMENT_SPEED;
-    //         this.currentDirection = this.doggyUp;
-    //         this.doggyMovement = true
-
-    //     } else if (doggyApp.keyPresses.ArrowDown) {
-    //         this.doggyPositionY += this.MOVEMENT_SPEED;
-    //         this.currentDirection = this.doggyDown;
-    //         this.doggyMovement = true
-    //     }
-    //     if (doggyApp.keyPresses.ArrowLeft) {
-    //         this.doggyPositionX -= this.MOVEMENT_SPEED;
-    //         this.currentDirection = this.doggyLeft;
-    //         this.doggyMovement = true
-
-    //     } else if (doggyApp.keyPresses.ArrowRight) {
-    //         this.doggyPositionX += this.MOVEMENT_SPEED;
-    //         this.currentDirection = this.doggyRight;
-    //         this.doggyMovement = true
-
-    //     }
-
-    // },
 
     createBoardGame() {
         this.doggyBoardGame = new DoggyBoardGame(this.ctx, this.canvas, this.canvasSize)
@@ -228,12 +205,12 @@ const doggyApp = {
 
     },
     endGame() {
-        this.kill()
+        this.canvasLimits()
         this.success()
 
 
     },
-    kill() {
+    canvasLimits() {
 
         if (this.doggy.doggyPositionX + this.doggy.scaledWidth >= this.canvasSize.w || this.doggy.doggyPositionX <= 0) {
             this.loseLives()
@@ -350,19 +327,13 @@ const doggyApp = {
                 }
             }
 
-            this.gameRestart()
 
+            this.puppiesArray.filter(elm => elm === 0).length === 0 ? this.startNewLevel() : this.gameRestart()
 
         }
 
     },
 
-    // successPosition() {
-    //     if (65 < (this.doggy.doggyPositionX) &&
-    //         110 > (this.doggy.doggyPositionX + 30)) {
-    //         console.log("primer hueco");
-    //     }
-    // },
 
     drawSuccess() {
         this.puppiesArray.forEach(elm => {
@@ -377,23 +348,21 @@ const doggyApp = {
 
         clearInterval(this.interval)
 
-
-
         this.obstacle = []
         this.obstacleTruck = []
         this.frameCount = 0
         this.currentLoopIndex = 0
         this.frameCount = 0
         this.gameFramesCount = 0
-        this.init()
+        this.start()
 
     },
 
 
     gameOver() {
 
-        clearInterval(this.interval)
-        this.gameOverScreen()
+        // clearInterval(this.interval)
+        // this.gameOverScreen()
     },
 
     gameOverScreen() {
@@ -405,7 +374,7 @@ const doggyApp = {
             this.ctx.fillStyle = "black"
             this.ctx.fillRect(0, 0, this.canvasSize.w, this.canvasSize.h)
 
-            this.ctx.font = "50px Monaco"
+            this.ctx.font = "50px 'Fixedsys Excelsior 3.01'"
             this.ctx.fillStyle = "white"
             this.ctx.fillText("Game Over", this.canvasSize.w / 2 - 120, this.canvasSize.h / 2)
 
@@ -413,6 +382,40 @@ const doggyApp = {
         }
 
     },
+
+    startNewLevel() {
+        this.levelCounter++
+        this.reset()
+
+        this.ctx.fillStyle = "black"
+        this.ctx.fillRect(0, 0, this.canvasSize.w, this.canvasSize.h)
+
+        this.ctx.font = "50px 'Fixedsys Excelsior 3.01'"
+        this.ctx.fillStyle = "white"
+        this.ctx.fillText("LEVEL 2", this.canvasSize.w / 2 - 120, this.canvasSize.h / 2)
+
+        setTimeout(() => {
+            this.doggyBoardGame = new levelTwo(this.ctx, this.canvas, this.canvasSize)
+            this.createDoggy()
+            
+            this.start()
+        }, 3000)
+
+
+    },
+
+    reset() {
+        clearInterval(this.interval)
+
+        this.obstacle = []
+        this.obstacleTruck = []
+        this.frameCount = 0
+        this.currentLoopIndex = 0
+        this.frameCount = 0
+        this.puppiesArray = [0, 0, 0, 0, 0]
+        this.gameFramesCount = 0
+    }
+
 
 
 

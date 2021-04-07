@@ -8,7 +8,7 @@ class DoggyBoardGame {
         this.timeLine = 105
         this.framesCounter = 0
         this.lives = []
-        this.livesArray =[]
+        this.livesArray = []
 
 
         this.boardGameInit()
@@ -53,7 +53,7 @@ class DoggyBoardGame {
         this.drawText()
         this.drawTime()
         this.drawLives()
-        
+
     }
 
 
@@ -183,7 +183,7 @@ class DoggyBoardGame {
         const live5 = new Live(this.ctx, 'Images/dog-live.png', 450, 43, 30, 20)
         const live6 = new Live(this.ctx, 'Images/dog-live.png', 480, 43, 30, 20)
         const live7 = new Live(this.ctx, 'Images/dog-live.png', 510, 43, 30, 20)
-        
+
         this.livesArray = [live1, live2, live3, live4, live5, live6, live7]
 
         // this.lives = livesArray.filter((elm, ind) =>{
@@ -197,10 +197,18 @@ class DoggyBoardGame {
 
 
         // console.log(live1)
-       
+
     }
     clearScreen() {
         this.ctx.clearRect(0, 0, this.canvasSize.w, this.canvasSize.h)
+    }
+
+    successImage() {
+        this.imageInstance = new Image()
+        this.imageInstance.src = 'Images/dog_recolor.png'
+        const puppy = this.ctx.drawImage(this.imageInstance, 0, 0, 50, 50, 120, 100, 50, 50)
+        this.puppiesArray.push(puppy)
+        console.log(this.puppiesArray);
     }
 
 }
@@ -258,6 +266,34 @@ class Live {
 
         this.ctx.drawImage(this.imageInstance, this.bonesPosition.x, this.bonesPosition.y, this.bonesSize.w, this.bonesSize.h)
 
+    }
+
+}
+
+class Puppy {
+    constructor(ctx, canvas, canvasSize, frameCount, currentLoopIndex, spriteRow, spriteColumn, puppyPosX, puppyPosY) {
+        this.ctx = ctx
+        this.canvas = canvas
+        this.canvasSize = canvasSize
+        this.frameCount = frameCount
+        this.currentLoopIndex = currentLoopIndex
+
+        this.puppyImageInstance = undefined
+        this.spriteRow = spriteRow
+        this.spriteColumn = spriteColumn
+        this.puppyPosX = puppyPosX
+        this.puppyPosY = puppyPosY
+
+        this.init()
+    }
+
+    init() {
+        this.puppyImageInstance = new Image()
+        this.puppyImageInstance.src = 'Images/dog_recolor.png'
+    }
+
+    draw() {
+        this.ctx.drawImage(this.puppyImageInstance, this.spriteRow, this.spriteColumn, 50, 50, this.puppyPosX, this.puppyPosY, 50, 50)
     }
 
 }

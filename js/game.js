@@ -31,7 +31,7 @@ const doggyApp = {
 
     obstacle: [],
     obstacleTruck: [],
-    puppiesArray: [],
+    puppiesArray: [0, 0, 0, 0, 0],
 
     doggy: undefined,
     livesCounter: 0,
@@ -42,10 +42,10 @@ const doggyApp = {
 
         this.setDimensions()
         this.createBoardGame()
-        //this.setEventListeners()
         this.createDoggy()
         this.createObstacle()
         this.createObstacleTruck()
+        this.drawSuccess()
         this.start()
         this.kill()
         this.drawLives2()
@@ -89,15 +89,14 @@ const doggyApp = {
 
             this.clear()
 
+
             if (this.gameFramesCount % 110 === 0) {
                 this.createObstacle()
                 this.createObstacleReverse()
-                //console.log(this.obstacle);
             }
 
             if (this.gameFramesCount % 300 === 0) {
                 this.createObstacleTruck()
-                console.log(this.obstacleTruck);
             }
 
             this.doggyBoardGame.boardGameStart()
@@ -110,6 +109,8 @@ const doggyApp = {
             });
             this.collision()
             this.success()
+            //this.successPosition()
+            this.drawSuccess()
             this.kill()
             this.drawLives2()
 
@@ -186,7 +187,7 @@ const doggyApp = {
         const obstacle7 = new Obstacles(this.ctx, this.canvasSize, -10, racingObstacle.vehUp * this.canvasSize.h, racingObstacle.vehicleWidth, racingObstacle.vehicleHeight, racingObstacle.imageSrc, racingObstacle.speed, false)
 
         this.obstacle.push(obstacle2, obstacle7)
-       
+
     },
     createObstacleTruck() {
         // truck and small truck
@@ -198,7 +199,7 @@ const doggyApp = {
 
         this.obstacle.push(obstacle5)
         this.obstacleTruck.push(obstacle3, obstacle4, obstacle6R)
-        
+
     },
     createObstacleReverse() {
         //normal car
@@ -207,7 +208,7 @@ const doggyApp = {
         const obstacle8R = new Obstacles(this.ctx, this.canvasSize, this.canvasSize.w, racingObstacle.vehDown * this.canvasSize.h, racingObstacle.vehicleWidth, racingObstacle.vehicleHeight, racingObstacle.imageSrcRev, -racingObstacle.speed, false)
 
         this.obstacle.push(obstacle1R, obstacle8R)
-        
+
     },
 
     throwCar() {
@@ -224,47 +225,48 @@ const doggyApp = {
             }
         });
 
-        
+
     },
-    endGame(){
+    endGame() {
         this.kill()
         this.success()
-        
+
 
     },
-    kill(){
-        
-        if(this.doggy.doggyPositionX + this.doggy.scaledWidth >= this.canvasSize.w  || this.doggy.doggyPositionX <= 0){
-           this.loseLives()
-        } 
-        if(this.doggyBoardGame.moveTime() === false){
-            this.gameOver()
-        } 
+    kill() {
+
+        if (this.doggy.doggyPositionX + this.doggy.scaledWidth >= this.canvasSize.w || this.doggy.doggyPositionX <= 0) {
+            this.loseLives()
+        }
+        if (this.doggyBoardGame.moveTime() === false) {
+            this.gameRestart()
+        }
 
     },
 
-    loseLives(){
+    loseLives() {
         this.livesCounter++
-        this.livesCounter === 7 ? console.log("pringao"): this.gameOver()   
-        
-   
+        this.livesCounter === 7 ? this.gameOver() : this.gameOver()
+
+
     },
-    drawLives2(){
+    drawLives2() {
         this.doggyBoardGame.lives = this.doggyBoardGame.livesArray.filter((elm) => {
             let counter = this.livesCounter
             let lifes = 6 - counter
             return (this.doggyBoardGame.livesArray.indexOf(elm) <= lifes)
-        }) 
-       this.doggyBoardGame.lives.forEach(elm => elm.draw())
+        })
+        this.doggyBoardGame.lives.forEach(elm => elm.draw())
     },
-    collision(){
-       
+
+    collision() {
+
         this.obstacle.forEach(elm => {
             if ((elm.vehiclePosY + elm.vehicleHeight) > (this.doggy.doggyPositionY + 15)
                 && (elm.vehiclePosY) < (this.doggy.doggyPositionY - 15 + this.doggy.scaledHeight)
                 && (elm.vehiclePosX) < (this.doggy.doggyPositionX - 20 + this.doggy.scaledWidth)
                 && (elm.vehiclePosX + elm.vehicleWidth) > (this.doggy.doggyPositionX + 20)) {
-                   this.loseLives()
+                this.loseLives()
             }
         });
 
@@ -273,51 +275,110 @@ const doggyApp = {
                 && (elm.vehiclePosY) < (this.doggy.doggyPositionY - 15 + this.doggy.scaledHeight)
                 && (elm.vehiclePosX) < (this.doggy.doggyPositionX - 20 + this.doggy.scaledWidth)
                 && (elm.vehiclePosX + elm.vehicleWidth) > (this.doggy.doggyPositionX + 20)) {
-                    this.loseLives()
+                this.loseLives()
             }
         });
 
         if ((110 + 35) > (this.doggy.doggyPositionY + 15)
             && (110) < (this.doggy.doggyPositionY - 15 + this.doggy.scaledHeight)
-            && 
-            (((5) < (this.doggy.doggyPositionX - 20 + this.doggy.scaledWidth) 
-            && (5 + 60) > (this.doggy.doggyPositionX + 20)) || 
-            ((110) < (this.doggy.doggyPositionX - 20 + this.doggy.scaledWidth)
-                && (110 + 60) > (this.doggy.doggyPositionX + 20)) ||
-            ((220) < (this.doggy.doggyPositionX - 20 + this.doggy.scaledWidth)
-                && (220 + 60) > (this.doggy.doggyPositionX + 20)) ||
-            ((330) < (this.doggy.doggyPositionX - 20 + this.doggy.scaledWidth)
-                && (330 + 60) > (this.doggy.doggyPositionX + 20)) ||
-            ((440) < (this.doggy.doggyPositionX - 20 + this.doggy.scaledWidth)
-                && (440 + 60) > (this.doggy.doggyPositionX + 20)) ||
-            ((550) < (this.doggy.doggyPositionX - 20 + this.doggy.scaledWidth)
-                && (550 + 60) > (this.doggy.doggyPositionX + 20)))  
-                
-                ) {
-                    this.loseLives()
+            &&
+            (((5) < (this.doggy.doggyPositionX - 20 + this.doggy.scaledWidth)
+                && (5 + 60) > (this.doggy.doggyPositionX + 20)) ||
+                ((110) < (this.doggy.doggyPositionX - 20 + this.doggy.scaledWidth)
+                    && (110 + 60) > (this.doggy.doggyPositionX + 20)) ||
+                ((220) < (this.doggy.doggyPositionX - 20 + this.doggy.scaledWidth)
+                    && (220 + 60) > (this.doggy.doggyPositionX + 20)) ||
+                ((330) < (this.doggy.doggyPositionX - 20 + this.doggy.scaledWidth)
+                    && (330 + 60) > (this.doggy.doggyPositionX + 20)) ||
+                ((440) < (this.doggy.doggyPositionX - 20 + this.doggy.scaledWidth)
+                    && (440 + 60) > (this.doggy.doggyPositionX + 20)) ||
+                ((550) < (this.doggy.doggyPositionX - 20 + this.doggy.scaledWidth)
+                    && (550 + 60) > (this.doggy.doggyPositionX + 20)))
+
+        ) {
+            this.loseLives()
         }
 
 
     },
-    success(){
-        if ((90 + 30) > (this.doggy.doggyPositionY + 30)){
-           this.successImage()
-           this.gameOver()
+    success() {
+        const puppy1 = new Puppy(this.ctx, this.canvas, this.canvasSize, this.frameCount, this.currentLoopIndex, 150, 0, 70, 105)
+        const puppy2 = new Puppy(this.ctx, this.canvas, this.canvasSize, this.frameCount, this.currentLoopIndex, 150, 200, 180, 105)
+        const puppy3 = new Puppy(this.ctx, this.canvas, this.canvasSize, this.frameCount, this.currentLoopIndex, 420, 200, 270, 105)
+        const puppy4 = new Puppy(this.ctx, this.canvas, this.canvasSize, this.frameCount, this.currentLoopIndex, 280, 200, 380, 105)
+        const puppy5 = new Puppy(this.ctx, this.canvas, this.canvasSize, this.frameCount, this.currentLoopIndex, 150, 200, 510, 105)
+
+        if ((90 + 20) > (this.doggy.doggyPositionY + 10)) {
+            if (55 < (this.doggy.doggyPositionX) &&
+                90 > (this.doggy.doggyPositionX)) {
+                if (this.puppiesArray[0] === 0) {
+                    //ctx, canvas, canvasSize, frameCount, currentLoopIndex, spriteRow, spriteColumn, puppyPosX, puppyPosY
+                    this.puppiesArray[0] = puppy1
+                    console.log(this.puppiesArray);
+
+                }
+
+            } else if (150 < (this.doggy.doggyPositionX) &&
+                220 > (this.doggy.doggyPositionX + 30)) {
+                if (this.puppiesArray[1] === 0) {
+                    this.puppiesArray[1] = puppy2
+                    console.log(this.puppiesArray);
+                }
+
+            } else if (270 < (this.doggy.doggyPositionX) &&
+                330 > (this.doggy.doggyPositionX + 30)) {
+                if (this.puppiesArray[2] === 0) {
+                    this.puppiesArray[2] = puppy3
+                    console.log(this.puppiesArray);
+
+                }
+
+            } else if (390 < (this.doggy.doggyPositionX) &&
+                440 > (this.doggy.doggyPositionX + 30)) {
+                if (this.puppiesArray[3] === 0) {
+                    this.puppiesArray[3] = puppy4
+                    console.log(this.puppiesArray);
+
+                }
+
+            } else if (500 < (this.doggy.doggyPositionX) &&
+                550 > (this.doggy.doggyPositionX + 30)) {
+                if (this.puppiesArray[4] === 0) {
+                    this.puppiesArray[4] = puppy5
+                    console.log(this.puppiesArray);
+
+                }
+            }
+
+            this.gameRestart()
+
+
         }
-           
+
     },
-    successImage(){
 
-        this.imageInstance = new Image()
-        this.imageInstance.src = 'Images/dog_recolor.png'
-        const puppy = this.ctx.drawImage(this.imageInstance, 0, 0, 50, 50, 120, 100, 50, 50)
+    // successPosition() {
+    //     if (65 < (this.doggy.doggyPositionX) &&
+    //         110 > (this.doggy.doggyPositionX + 30)) {
+    //         console.log("primer hueco");
+    //     }
+    // },
 
-         this.puppiesArray.push(puppy)
-         console.log(this.puppiesArray);
+    drawSuccess() {
+        this.puppiesArray.forEach(elm => {
+            if (elm !== 0) {
+                elm.draw()
+            }
+        });
+
     },
-    gameOver(){
 
-      clearInterval(this.interval)
+    gameRestart() {
+
+        clearInterval(this.interval)
+
+
+
         this.obstacle = []
         this.obstacleTruck = []
         this.frameCount = 0
@@ -325,6 +386,31 @@ const doggyApp = {
         this.frameCount = 0
         this.gameFramesCount = 0
         this.init()
+
+    },
+
+
+    gameOver() {
+
+        clearInterval(this.interval)
+        this.gameOverScreen()
+    },
+
+    gameOverScreen() {
+        let counter = 0
+
+        while (counter <= (1000 / this.FPS * 6)) {
+            console.log(counter);
+
+            this.ctx.fillStyle = "black"
+            this.ctx.fillRect(0, 0, this.canvasSize.w, this.canvasSize.h)
+
+            this.ctx.font = "50px Monaco"
+            this.ctx.fillStyle = "white"
+            this.ctx.fillText("Game Over", this.canvasSize.w / 2 - 120, this.canvasSize.h / 2)
+
+            counter++
+        }
 
     },
 

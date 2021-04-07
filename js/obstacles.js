@@ -1,6 +1,6 @@
 
 class Obstacles {
-    constructor(ctx, canvasSize, vehiclePosX, vehiclePosY, vehicleWidth, vehicleHeight, imageSrc, speed, reverse) {
+    constructor(ctx, canvasSize, vehiclePosX, vehiclePosY, vehicleWidth, vehicleHeight, imageSrc, speed, isLog) {
         this.ctx = ctx
         this.canvasSize = canvasSize
         this.vehiclePosX = vehiclePosX
@@ -10,8 +10,9 @@ class Obstacles {
         this.imageSrc = imageSrc
         this.speed = speed
 
-        this.reverse = reverse
+        this.isLog = isLog
         this.obstacleImageInstance = undefined
+        this.scale = 0.5
 
 
         this.init()
@@ -24,15 +25,14 @@ class Obstacles {
     }
 
     draw() {
-        if (this.reverse) {
-            this.ctx.save()
-            this.ctx.translate(this.vehiclePosX, this.vehiclePosY)
-            this.ctx.rotate(Math.PI)
-            this.ctx.drawImage(this.obstacleImageInstance, this.vehiclePosX, this.vehiclePosY, this.vehicleWidth, this.vehicleHeight)
-            this.ctx.restore()
+        if (this.isLog) {
+
+            this.ctx.drawImage(this.obstacleImageInstance, 0, 0, 600, 100, this.vehiclePosX, this.vehiclePosY, this.vehicleWidth, this.vehicleHeight)
+
         } else {
             this.ctx.drawImage(this.obstacleImageInstance, this.vehiclePosX, this.vehiclePosY, this.vehicleWidth, this.vehicleHeight)
         }
+
         //Rotation method:
         //this.ctx.save()
         //this.ctx.translate(this.carPosX, this.carPosY)
@@ -88,6 +88,18 @@ const racingObstacle = {
     speed: 5,
     vehDown: .70,
     vehUp: .28,
+}
+
+const logBigObstacle = {
+    imageSrc: './Images/logImage.png',
+    imageSrcRev: './Images/logImage.png',
+    vehicleHeight: 30,
+    vehicleWidth: 100,
+    speed: 1.1,
+    vehDown: .42,
+    vehDown2: .35,
+    vehUp: .28,
+    vehUp2: .22,
 }
 
 

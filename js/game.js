@@ -36,6 +36,7 @@ const doggyApp = {
     doggy: undefined,
     livesCounter: 0,
     levelCounter: 0,
+    pointsCount: 0,
 
     init() {
         this.canvas = document.getElementById("myCanvas")
@@ -61,38 +62,22 @@ const doggyApp = {
 
     },
 
-    // setEventListeners() {
-
-    //     document.onkeydown = e => {
-    //         this.gameKeys.forEach(elm => {
-    //             if (e.key === elm) {
-    //                 this.keyPresses[e.key] = true
-    //             }
-    //         });
-    //     }
-
-    //     document.onkeyup = e => {
-    //         this.gameKeys.forEach(elm => {
-    //             if (e.key === elm) {
-    //                 this.keyPresses[e.key] = false
-    //             }
-    //         });
-    //     }
-
-    // },
-
     start() {
-        //this.reset()
-        const puppy1 = new Puppy(this.ctx, this.canvas, this.canvasSize, this.frameCount, this.currentLoopIndex, 150, 0, 70, 105)
+        const puppy1 = new Puppy(this.ctx, this.canvas, this.canvasSize, this.frameCount, this.currentLoopIndex, 150, 0, 70, 98)
         const puppy2 = new Puppy(this.ctx, this.canvas, this.canvasSize, this.frameCount, this.currentLoopIndex, 150, 200, 180, 105)
         const puppy3 = new Puppy(this.ctx, this.canvas, this.canvasSize, this.frameCount, this.currentLoopIndex, 420, 200, 270, 105)
         const puppy4 = new Puppy(this.ctx, this.canvas, this.canvasSize, this.frameCount, this.currentLoopIndex, 280, 200, 380, 105)
         this.puppiesArray = [puppy1, puppy2, puppy3, puppy4]
+
         this.interval = setInterval(() => {
 
-            this.gameFramesCount > 5000 ? this.gameFramesCount = 0 : this.gameFramesCount++
+            this.gameFramesCount > 10000 ? this.gameFramesCount = 0 : this.gameFramesCount++
 
             this.clear()
+
+            if (this.gameFramesCount % 115 === 0) {
+                this.pointsCounter()
+            }
 
 
             if (this.gameFramesCount % 110 === 0) {
@@ -107,10 +92,14 @@ const doggyApp = {
             this.doggyBoardGame.boardGameStart()
             this.doggy.movement(this.currentLoopIndex)
             this.obstacle.forEach(elm => {
-                elm.move()
+                if (elm !== undefined) {
+                    elm.move()
+                }
             });
             this.obstacleTruck.forEach(elm => {
-                elm.move()
+                if (elm !== undefined) {
+                    elm.move()
+                }
             });
             this.collision()
             this.success()
@@ -158,47 +147,93 @@ const doggyApp = {
     createObstacle() {
         this.throwCar()
         //normal car
-        const obstacle2 = new Obstacles(this.ctx, this.canvasSize, -10, carObstacle.vehDown * this.canvasSize.h, carObstacle.vehicleWidth, carObstacle.vehicleHeight, carObstacle.imageSrc, carObstacle.speed, false)
+        let obstacle7
 
-        //racing car
-        const obstacle7 = new Obstacles(this.ctx, this.canvasSize, -10, racingObstacle.vehUp * this.canvasSize.h, racingObstacle.vehicleWidth, racingObstacle.vehicleHeight, racingObstacle.imageSrc, racingObstacle.speed, false)
+        const obstacle2 = new Obstacles(this.ctx, this.canvasSize, -10, carObstacle.vehDown * this.canvasSize.h,
+            carObstacle.vehicleWidth, carObstacle.vehicleHeight, carObstacle.imageSrc, carObstacle.speed, false)
+        this.obstacle.push(obstacle2)
 
-        this.obstacle.push(obstacle2, obstacle7)
+        if (this.levelCounter === 0) {
+            //racing car
+            obstacle7 = new Obstacles(this.ctx, this.canvasSize, -10, racingObstacle.vehUp * this.canvasSize.h,
+                racingObstacle.vehicleWidth, racingObstacle.vehicleHeight, racingObstacle.imageSrc, racingObstacle.speed, false)
+            this.obstacle.push(obstacle7)
+        } else {
+            obstacle7 = new Obstacles(this.ctx, this.canvasSize, -80, logBigObstacle.vehUp * this.canvasSize.h,
+                logBigObstacle.vehicleWidth, logBigObstacle.vehicleHeight, logBigObstacle.imageSrc, logBigObstacle.speed, true)
+
+            this.obstacle.push(obstacle7)
+        }
 
     },
     createObstacleTruck() {
         // truck and small truck
-        const obstacle3 = new Obstacles(this.ctx, this.canvasSize, -10, truckObstacle.vehUp * this.canvasSize.h, truckObstacle.vehicleWidth, truckObstacle.vehicleHeight, truckObstacle.imageSrc, truckObstacle.speed, false)
-        const obstacle4 = new Obstacles(this.ctx, this.canvasSize, -10, truckObstacle.vehDown * this.canvasSize.h, truckObstacle.vehicleWidth, truckObstacle.vehicleHeight, truckObstacle.imageSrc, truckObstacle.speed, false)
-        const obstacle5 = new Obstacles(this.ctx, this.canvasSize, -10, sTruckObstacle.vehUp * this.canvasSize.h, sTruckObstacle.vehicleWidth, sTruckObstacle.vehicleHeight, sTruckObstacle.imageSrc, sTruckObstacle.speed, false)
+        let obstacle3, obstacle5
+
+        if (this.levelCounter === 0) {
+            obstacle3 = new Obstacles(this.ctx, this.canvasSize, -30, truckObstacle.vehUp * this.canvasSize.h,
+                truckObstacle.vehicleWidth, truckObstacle.vehicleHeight, truckObstacle.imageSrc, truckObstacle.speed, false)
+            obstacle5 = new Obstacles(this.ctx, this.canvasSize, -30, sTruckObstacle.vehUp * this.canvasSize.h,
+                sTruckObstacle.vehicleWidth, sTruckObstacle.vehicleHeight, sTruckObstacle.imageSrc, sTruckObstacle.speed, false)
+
+            this.obstacleTruck.push(obstacle3)
+            this.obstacle.push(obstacle5)
+        } else {
+            obstacle3 = new Obstacles(this.ctx, this.canvasSize, -30, logBigObstacle.vehDown * this.canvasSize.h,
+                logBigObstacle.vehicleWidth * 1.2, logBigObstacle.vehicleHeight, logBigObstacle.imageSrc, logBigObstacle.speed, true)
+            obstacle5 = new Obstacles(this.ctx, this.canvasSize, -30, logBigObstacle.vehUp2 * this.canvasSize.h,
+                logBigObstacle.vehicleWidth, logBigObstacle.vehicleHeight, logBigObstacle.imageSrc, logBigObstacle.speed, true)
+
+            this.obstacleTruck.push(obstacle3)
+            //this.obstacle.push(obstacle5)
+        }
+
+        const obstacle4 = new Obstacles(this.ctx, this.canvasSize, -30, truckObstacle.vehDown * this.canvasSize.h,
+            truckObstacle.vehicleWidth, truckObstacle.vehicleHeight, truckObstacle.imageSrc, truckObstacle.speed, false)
         //small truck car
-        const obstacle6R = new Obstacles(this.ctx, this.canvasSize, this.canvasSize.w, sTruckObstacle.vehDown * this.canvasSize.h, sTruckObstacle.vehicleWidth, sTruckObstacle.vehicleHeight, sTruckObstacle.imageSrcRev, -sTruckObstacle.speed, false)
+        const obstacle6R = new Obstacles(this.ctx, this.canvasSize, this.canvasSize.w, sTruckObstacle.vehDown * this.canvasSize.h,
+            sTruckObstacle.vehicleWidth, sTruckObstacle.vehicleHeight, sTruckObstacle.imageSrcRev, -sTruckObstacle.speed, false)
 
-        this.obstacle.push(obstacle5)
-        this.obstacleTruck.push(obstacle3, obstacle4, obstacle6R)
-
+        this.obstacleTruck.push(obstacle4, obstacle6R)
     },
     createObstacleReverse() {
-        //normal car
-        const obstacle1R = new Obstacles(this.ctx, this.canvasSize, this.canvasSize.w, carObstacle.vehUp * this.canvasSize.h, carObstacle.vehicleWidth, carObstacle.vehicleHeight, carObstacle.imageSrcRev, -carObstacle.speed, false)
-        //racing car
-        const obstacle8R = new Obstacles(this.ctx, this.canvasSize, this.canvasSize.w, racingObstacle.vehDown * this.canvasSize.h, racingObstacle.vehicleWidth, racingObstacle.vehicleHeight, racingObstacle.imageSrcRev, -racingObstacle.speed, false)
+        let obstacle1R
 
-        this.obstacle.push(obstacle1R, obstacle8R)
+        if (this.levelCounter === 0) {
+            //normal car
+            obstacle1R = new Obstacles(this.ctx, this.canvasSize, this.canvasSize.w, carObstacle.vehUp * this.canvasSize.h,
+                carObstacle.vehicleWidth, carObstacle.vehicleHeight, carObstacle.imageSrcRev, -carObstacle.speed, false)
+            this.obstacle.push(obstacle1R)
+        } else {
+
+            obstacle5R = new Obstacles(this.ctx, this.canvasSize, this.canvasSize.w, logBigObstacle.vehDown2 * this.canvasSize.h,
+                logBigObstacle.vehicleWidth * .8, logBigObstacle.vehicleHeight, logBigObstacle.imageSrc, -logBigObstacle.speed * 1.5, true)
+
+            obstacle6R = new Obstacles(this.ctx, this.canvasSize, this.canvasSize.w, logBigObstacle.vehUp2 * this.canvasSize.h,
+                logBigObstacle.vehicleWidth * .5, logBigObstacle.vehicleHeight, logBigObstacle.imageSrc, -logBigObstacle.speed, true)
+
+            this.obstacle.push(obstacle5R, obstacle6R)
+        }
+
+        //racing car
+        const obstacle8R = new Obstacles(this.ctx, this.canvasSize, this.canvasSize.w, racingObstacle.vehDown * this.canvasSize.h,
+            racingObstacle.vehicleWidth, racingObstacle.vehicleHeight, racingObstacle.imageSrcRev, -racingObstacle.speed, false)
+
+        this.obstacle.push(obstacle8R)
 
     },
 
     throwCar() {
-        this.obstacle.forEach(elm => {
+        this.obstacle.forEach((elm, ind) => {
             if (elm.vehiclePosX >= 1000 ||
                 elm.vehiclePosX <= -100) {
-                this.obstacle.shift()
+                this.obstacle.splice(ind, 1)
             }
         });
-        this.obstacleTruck.forEach(elm => {
+        this.obstacleTruck.forEach((elm, ind) => {
             if (elm.vehiclePosX >= 1000 ||
                 elm.vehiclePosX <= -300) {
-                this.obstacleTruck.shift()
+                this.obstacleTruck.splice(ind, 1)
             }
         });
 
@@ -279,7 +314,7 @@ const doggyApp = {
 
     },
     success() {
-        const puppy1 = new Puppy(this.ctx, this.canvas, this.canvasSize, this.frameCount, this.currentLoopIndex, 150, 0, 70, 105)
+        const puppy1 = new Puppy(this.ctx, this.canvas, this.canvasSize, this.frameCount, this.currentLoopIndex, 150, 0, 70, 98)
         const puppy2 = new Puppy(this.ctx, this.canvas, this.canvasSize, this.frameCount, this.currentLoopIndex, 150, 200, 180, 105)
         const puppy3 = new Puppy(this.ctx, this.canvas, this.canvasSize, this.frameCount, this.currentLoopIndex, 420, 200, 270, 105)
         const puppy4 = new Puppy(this.ctx, this.canvas, this.canvasSize, this.frameCount, this.currentLoopIndex, 280, 200, 380, 105)
@@ -289,7 +324,6 @@ const doggyApp = {
             if (55 < (this.doggy.doggyPositionX) &&
                 90 > (this.doggy.doggyPositionX)) {
                 if (this.puppiesArray[0] === 0) {
-                    //ctx, canvas, canvasSize, frameCount, currentLoopIndex, spriteRow, spriteColumn, puppyPosX, puppyPosY
                     this.puppiesArray[0] = puppy1
                     console.log(this.puppiesArray);
 
@@ -392,12 +426,13 @@ const doggyApp = {
 
         this.ctx.font = "50px 'Fixedsys Excelsior 3.01'"
         this.ctx.fillStyle = "white"
-        this.ctx.fillText("LEVEL 2", this.canvasSize.w / 2 - 120, this.canvasSize.h / 2)
+        this.ctx.fillText("LEVEL 2", this.canvasSize.w / 2 - 100, this.canvasSize.h / 2)
 
         setTimeout(() => {
             this.doggyBoardGame = new levelTwo(this.ctx, this.canvas, this.canvasSize)
             this.createDoggy()
-            
+            this.createObstacle()
+            this.createObstacleTruck()
             this.start()
         }, 3000)
 
@@ -414,10 +449,10 @@ const doggyApp = {
         this.frameCount = 0
         this.puppiesArray = [0, 0, 0, 0, 0]
         this.gameFramesCount = 0
-    }
+    },
 
-
-
-
+    pointsCounter() {
+        this.pointsCount++
+    },
 
 }

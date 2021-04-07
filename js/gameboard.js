@@ -58,6 +58,7 @@ class DoggyBoardGame {
         this.drawGrass()
         this.drawLava()
         this.drawStones()
+        this.drawArena()
         this.drawText()
         this.drawTime()
         this.drawLives()
@@ -82,11 +83,14 @@ class DoggyBoardGame {
 
     drawBoard() {
 
-        this.ctx.fillRect(0, 5, this.canvasSize.w, this.canvasSize.h,)
         this.ctx.fillStyle = 'black'
-
         this.ctx.fillRect(0, 600, this.canvasSize.w, this.canvasSize.h / 2 - 100)
+
         this.ctx.fillStyle = 'grey'
+        this.ctx.fillRect(0, 5, this.canvasSize.w, this.canvasSize.h,)
+
+        this.ctx.fillStyle = 'black'
+        this.ctx.fillRect(0, 600, this.canvasSize.w, 200)
 
     }
 
@@ -94,10 +98,19 @@ class DoggyBoardGame {
         this.imageInstance = new Image()
         this.imageInstance.src = 'img/stones.png'
         this.ctx.drawImage(this.imageInstance, 0, 90, 600, 30)
+        // this.imageInstance = new Image()
+        // this.imageInstance.src = 'img/stones.png'
+        // this.ctx.drawImage(this.imageInstance, 0, 355, 600, 30)
 
+    }
+
+    drawArena() {
         this.imageInstance = new Image()
-        this.imageInstance.src = 'Images/sandDesert.jpg'
-        this.ctx.drawImage(this.imageInstance, 0, 355, 600, 30, )
+        this.imageInstance.src = 'Images/sand_2d.jpg'
+        let pat = this.ctx.createPattern(this.imageInstance, "repeat")
+        this.ctx.fillStyle = pat;   // set the fill style
+        this.ctx.rect(0, 355, 600, 30);  // create a rectangle
+        this.ctx.fill();
 
     }
 
@@ -141,11 +154,13 @@ class DoggyBoardGame {
 
     drawText() {
 
+        this.ctx.fillStyle = "white"
+        this.ctx.fillText(`SCORE: `, 20, 60)
         this.ctx.font = "30px 'Fixedsys Excelsior 3.01'"
-        this.ctx.fillText("SCORE: 00001 ", 20, 60)
 
-        this.ctx.font = "30px 'Fixedsys Excelsior 3.01'"
         this.ctx.fillText("LIVES:", 230, 60)
+        this.ctx.fillStyle = "white"
+        this.ctx.font = "30px 'Fixedsys Excelsior 3.01'"
 
     }
 
@@ -356,17 +371,24 @@ class levelTwo extends DoggyBoardGame {
         this.ctx.fillRect(0, this.canvasSize.h / 2, this.canvasSize.w, this.canvasSize.h * .35)
 
     }
-    drawSand(){
+    drawSand() {
         this.imageSand = new Image()
         this.imageSand.src = 'Images/sandDesert.jpg'
         this.ctx.drawImage(this.imageSand, 0, 110, this.canvasSize.w, 35)
     }
     drawWater() {
-        console.log('nkdnico');
-
         this.imageWater = new Image()
         this.imageWater.src = 'Images/waterSprite.jpg'
         this.ctx.drawImage(this.imageWater, 0, 145, this.canvasSize.w, 190)
+    }
+    drawGrass() {
+        this.imageInstance = new Image()
+        this.imageInstance.src = 'Images/sand_2d.jpg'
+        this.ctx.drawImage(this.imageInstance, 0, 330, 600, 40)
+
+        this.imageInstance = new Image()
+        this.imageInstance.src = 'img/grass3.jpg'
+        this.ctx.drawImage(this.imageInstance, 0, 570, 600, 40)
 
     }
 

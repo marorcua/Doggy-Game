@@ -36,7 +36,8 @@ const doggyApp = {
     doggy: undefined,
     livesCounter: 0,
     levelCounter: 0,
-    pointsCount: 0,
+    puppyPointsCounter: [0],
+    pointsCount: 450,
 
     init() {
         this.canvas = document.getElementById("myCanvas")
@@ -44,13 +45,13 @@ const doggyApp = {
 
         this.setDimensions()
         this.createBoardGame()
-        this.createDoggy()
+        this.drawLives2()
         this.createObstacle()
         this.createObstacleTruck()
+        this.createDoggy()
         this.drawSuccess()
-        this.start()
         this.canvasLimits()
-        this.drawLives2()
+        this.start()
 
     },
 
@@ -67,7 +68,7 @@ const doggyApp = {
         const puppy2 = new Puppy(this.ctx, this.canvas, this.canvasSize, this.frameCount, this.currentLoopIndex, 150, 200, 180, 105)
         const puppy3 = new Puppy(this.ctx, this.canvas, this.canvasSize, this.frameCount, this.currentLoopIndex, 420, 200, 270, 105)
         const puppy4 = new Puppy(this.ctx, this.canvas, this.canvasSize, this.frameCount, this.currentLoopIndex, 280, 200, 380, 105)
-        this.puppiesArray = [puppy1, puppy2, puppy3, puppy4]
+        //this.puppiesArray = [puppy1, puppy2, puppy3, 0, 0]
 
         this.interval = setInterval(() => {
 
@@ -75,10 +76,9 @@ const doggyApp = {
 
             this.clear()
 
-            if (this.gameFramesCount % 115 === 0) {
+            if (this.gameFramesCount % 4 === 0) {
                 this.pointsCounter()
             }
-
 
             if (this.gameFramesCount % 110 === 0) {
                 this.createObstacle()
@@ -90,7 +90,8 @@ const doggyApp = {
             }
 
             this.doggyBoardGame.boardGameStart()
-            this.doggy.movement(this.currentLoopIndex)
+            this.doggyBoardGame.points = this.pointsCount
+
             this.obstacle.forEach(elm => {
                 if (elm !== undefined) {
                     elm.move()
@@ -101,12 +102,14 @@ const doggyApp = {
                     elm.move()
                 }
             });
-            this.collision()
+            this.drawLives2()
             this.success()
             //this.successPosition()
             this.drawSuccess()
+
+            this.collision()
+            this.doggy.movement(this.currentLoopIndex)
             this.canvasLimits()
-            this.drawLives2()
 
             if (this.doggy.doggyMovement) {
                 this.frameCount++
@@ -134,7 +137,7 @@ const doggyApp = {
     },
 
     createBoardGame() {
-        this.doggyBoardGame = new DoggyBoardGame(this.ctx, this.canvas, this.canvasSize)
+        this.doggyBoardGame = new DoggyBoardGame(this.ctx, this.canvas, this.canvasSize, this.pointsCount)
     },
 
     createDoggy() {
@@ -162,7 +165,7 @@ const doggyApp = {
             obstacle7 = new Obstacles(this.ctx, this.canvasSize, -80, logBigObstacle.vehUp * this.canvasSize.h,
                 logBigObstacle.vehicleWidth, logBigObstacle.vehicleHeight, logBigObstacle.imageSrc, logBigObstacle.speed, true)
 
-            this.obstacle.push(obstacle7)
+            //this.obstacle.push(obstacle7)
         }
 
     },
@@ -178,13 +181,14 @@ const doggyApp = {
 
             this.obstacleTruck.push(obstacle3)
             this.obstacle.push(obstacle5)
+
         } else {
             obstacle3 = new Obstacles(this.ctx, this.canvasSize, -30, logBigObstacle.vehDown * this.canvasSize.h,
                 logBigObstacle.vehicleWidth * 1.2, logBigObstacle.vehicleHeight, logBigObstacle.imageSrc, logBigObstacle.speed, true)
-            obstacle5 = new Obstacles(this.ctx, this.canvasSize, -30, logBigObstacle.vehUp2 * this.canvasSize.h,
+            obstacle5 = new Obstacles(this.ctx, this.canvasSize, -80, logBigObstacle.vehUp * this.canvasSize.h,
                 logBigObstacle.vehicleWidth, logBigObstacle.vehicleHeight, logBigObstacle.imageSrc, logBigObstacle.speed, true)
 
-            this.obstacleTruck.push(obstacle3)
+            this.obstacleTruck.push(obstacle3, obstacle5)
             //this.obstacle.push(obstacle5)
         }
 
@@ -196,6 +200,7 @@ const doggyApp = {
 
         this.obstacleTruck.push(obstacle4, obstacle6R)
     },
+
     createObstacleReverse() {
         let obstacle1R
 
@@ -251,17 +256,17 @@ const doggyApp = {
             this.loseLives()
         }
         if (this.doggyBoardGame.moveTime() === false) {
-            this.gameRestart()
+            this.loseLives()
         }
 
     },
 
     loseLives() {
         this.livesCounter++
-        this.livesCounter === 7 ? this.gameOver() : this.gameOver()
-
+        this.livesCounter === 7 ? this.gameOver() : this.gameRestart()
 
     },
+
     drawLives2() {
         this.doggyBoardGame.lives = this.doggyBoardGame.livesArray.filter((elm) => {
             let counter = this.livesCounter
@@ -271,27 +276,82 @@ const doggyApp = {
         this.doggyBoardGame.lives.forEach(elm => elm.draw())
     },
 
+    isCollisionLog() {
+        return (this.isCollisionLog() || this.isCollisionLogTruck())
+    },
+
+    isCollisionLogTruck() {
+        return this.obstacleTruck.some(elm => {
+            return (elm.isLog && (elm.vehiclePosY + elm.vehicleHeight) > (this.doggy.doggyPositionY + 5)
+                && (elm.vehiclePosY) < (this.doggy.doggyPositionY + this.doggy.scaledHeight - 5)
+                && (elm.vehiclePosX) < (this.doggy.doggyPositionX + this.doggy.scaledWidth - 15)
+                && (elm.vehiclePosX + elm.vehicleWidth) > (this.doggy.doggyPositionX + 15))
+        })
+    },
+
+    isCollisionLog() {
+        return this.obstacle.some(elm => {
+            return (elm.isLog && (elm.vehiclePosY + elm.vehicleHeight) > (this.doggy.doggyPositionY + 5)
+                && (elm.vehiclePosY - 5) < (this.doggy.doggyPositionY + this.doggy.scaledHeight - 5)
+                && (elm.vehiclePosX) < (this.doggy.doggyPositionX + this.doggy.scaledWidth - 15)
+                && (elm.vehiclePosX + elm.vehicleWidth) > (this.doggy.doggyPositionX + 15))
+        })
+    },
+
+    isCollisionVehicle() {
+        return this.obstacle.some(elm => {
+            return (!elm.isLog && elm.vehiclePosY + elm.vehicleHeight) > (this.doggy.doggyPositionY + 15)
+                && (elm.vehiclePosY) < (this.doggy.doggyPositionY - 15 + this.doggy.scaledHeight)
+                && (elm.vehiclePosX) < (this.doggy.doggyPositionX - 20 + this.doggy.scaledWidth)
+                && (elm.vehiclePosX + elm.vehicleWidth) > (this.doggy.doggyPositionX + 20)
+
+        }) || this.obstacleTruck.some(elm => {
+            return (!elm.isLog && elm.vehiclePosY + elm.vehicleHeight) > (this.doggy.doggyPositionY + 15)
+                && (elm.vehiclePosY) < (this.doggy.doggyPositionY - 15 + this.doggy.scaledHeight)
+                && (elm.vehiclePosX) < (this.doggy.doggyPositionX - 20 + this.doggy.scaledWidth)
+                && (elm.vehiclePosX + elm.vehicleWidth) > (this.doggy.doggyPositionX + 20)
+        })
+    },
+
+    isCollisionWater() {
+        return (this.doggy.doggyPositionY + this.doggy.scaledHeight < 335 &&
+            this.doggy.doggyPositionY + this.doggy.scaledHeight > 145)
+    },
+
     collision() {
+        //si funcionan arrastrar efectos dentro del if
 
-        this.obstacle.forEach(elm => {
-            if ((elm.vehiclePosY + elm.vehicleHeight) > (this.doggy.doggyPositionY + 15)
-                && (elm.vehiclePosY) < (this.doggy.doggyPositionY - 15 + this.doggy.scaledHeight)
-                && (elm.vehiclePosX) < (this.doggy.doggyPositionX - 20 + this.doggy.scaledWidth)
-                && (elm.vehiclePosX + elm.vehicleWidth) > (this.doggy.doggyPositionX + 20)) {
+        //1: estas en zona agua o en zona carretera
+        if (this.levelCounter > 0 && this.isCollisionWater()) {
+
+            // estas en zona agua y en Log, estas en un Log Truc o normal?
+            if (this.isCollisionLogTruck()) {
+                console.log("carril truck")
+
+                this.doggy.doggyPositionX += logBigObstacle.speed
+
+
+            } else if (this.isCollisionLog()) {
+                console.log("carril normal")
+
+                this.doggy.doggyPositionX -= logBigObstacle.speed
+
+            }
+
+            else {
                 this.loseLives()
             }
-        });
 
-        this.obstacleTruck.forEach(elm => {
-            if ((elm.vehiclePosY + elm.vehicleHeight) > (this.doggy.doggyPositionY + 15)
-                && (elm.vehiclePosY) < (this.doggy.doggyPositionY - 15 + this.doggy.scaledHeight)
-                && (elm.vehiclePosX) < (this.doggy.doggyPositionX - 20 + this.doggy.scaledWidth)
-                && (elm.vehiclePosX + elm.vehicleWidth) > (this.doggy.doggyPositionX + 20)) {
-                this.loseLives()
-            }
-        });
+            //estas en zona carretera
+        } else if (this.isCollisionVehicle()) {
+            console.log("te mueres");
+            //this.loseLives()
 
-        if ((110 + 35) > (this.doggy.doggyPositionY + 15)
+        }
+
+        //Lava hitbox
+
+        if ((110 + 35) > (this.doggy.doggyPositionY + 20)
             && (110) < (this.doggy.doggyPositionY - 15 + this.doggy.scaledHeight)
             &&
             (((5) < (this.doggy.doggyPositionX - 20 + this.doggy.scaledWidth)
@@ -325,7 +385,8 @@ const doggyApp = {
                 90 > (this.doggy.doggyPositionX)) {
                 if (this.puppiesArray[0] === 0) {
                     this.puppiesArray[0] = puppy1
-                    console.log(this.puppiesArray);
+                    this.puppyPointsCounter.push(this.pointsCount)
+                    this.createPointer()
 
                 }
 
@@ -333,14 +394,17 @@ const doggyApp = {
                 220 > (this.doggy.doggyPositionX + 30)) {
                 if (this.puppiesArray[1] === 0) {
                     this.puppiesArray[1] = puppy2
-                    console.log(this.puppiesArray);
+                    this.puppyPointsCounter.push(this.pointsCount)
+                    this.createPointer()
+
                 }
 
             } else if (270 < (this.doggy.doggyPositionX) &&
                 330 > (this.doggy.doggyPositionX + 30)) {
                 if (this.puppiesArray[2] === 0) {
                     this.puppiesArray[2] = puppy3
-                    console.log(this.puppiesArray);
+                    this.puppyPointsCounter.push(this.pointsCount)
+                    this.createPointer()
 
                 }
 
@@ -348,7 +412,8 @@ const doggyApp = {
                 440 > (this.doggy.doggyPositionX + 30)) {
                 if (this.puppiesArray[3] === 0) {
                     this.puppiesArray[3] = puppy4
-                    console.log(this.puppiesArray);
+                    this.puppyPointsCounter.push(this.pointsCount)
+                    this.createPointer()
 
                 }
 
@@ -356,15 +421,14 @@ const doggyApp = {
                 550 > (this.doggy.doggyPositionX + 30)) {
                 if (this.puppiesArray[4] === 0) {
                     this.puppiesArray[4] = puppy5
-                    console.log(this.puppiesArray);
-
+                    this.puppyPointsCounter.push(this.pointsCount)
+                    this.createPointer()
                 }
             }
 
-
             this.puppiesArray.filter(elm => elm === 0).length === 0 ? this.startNewLevel() : this.gameRestart()
-
         }
+
 
     },
 
@@ -388,6 +452,10 @@ const doggyApp = {
         this.currentLoopIndex = 0
         this.frameCount = 0
         this.gameFramesCount = 0
+        this.doggyBoardGame.timeLine = 105
+        this.pointsCount = 500
+
+        this.createAll()
         this.start()
 
     },
@@ -395,8 +463,8 @@ const doggyApp = {
 
     gameOver() {
 
-        // clearInterval(this.interval)
-        // this.gameOverScreen()
+        //clearInterval(this.interval)
+        //this.gameOverScreen()
     },
 
     gameOverScreen() {
@@ -430,9 +498,7 @@ const doggyApp = {
 
         setTimeout(() => {
             this.doggyBoardGame = new levelTwo(this.ctx, this.canvas, this.canvasSize)
-            this.createDoggy()
-            this.createObstacle()
-            this.createObstacleTruck()
+            this.createAll()
             this.start()
         }, 3000)
 
@@ -449,10 +515,39 @@ const doggyApp = {
         this.frameCount = 0
         this.puppiesArray = [0, 0, 0, 0, 0]
         this.gameFramesCount = 0
+        this.pointsCount = 0
+        this.doggy = undefined
+
     },
 
     pointsCounter() {
-        this.pointsCount++
+
+        this.pointsCount >= 0 ? this.pointsCount-- : null
     },
+
+    createPointer() {
+        //console.log(this.puppyPointsCounter);
+        document.querySelector(".score").innerHTML = `Puppy Score: ${this.puppyPointsCounter.reduce((accumulator, currentValue) => accumulator + currentValue)}`
+        console.log(this.puppyPointsCounter);
+        let ind = this.puppyPointsCounter.length - 1
+        let elm = this.puppyPointsCounter[ind]
+
+        let newParagraph = document.createElement("p")
+        let newText = document.createTextNode(`Puppy ${ind}: ${elm}`)
+
+        newParagraph.appendChild(newText)
+
+        let indexScore = document.getElementsByClassName("game-intro")[0]
+        console.log(indexScore);
+        indexScore.appendChild(newParagraph)
+
+    },
+
+    createAll() {
+        this.createObstacle()
+        this.createObstacleTruck()
+        this.createDoggy()
+    },
+
 
 }

@@ -1,9 +1,10 @@
 class DoggyBoardGame {
 
-    constructor(ctx, canvas, canvasSize) {
+    constructor(ctx, canvas, canvasSize, points) {
         this.canvas = canvas
         this.ctx = ctx
         this.canvasSize = canvasSize
+        this.points = points
         this.lines = []
         this.timeLine = 105
         this.framesCounter = 0
@@ -155,7 +156,7 @@ class DoggyBoardGame {
     drawText() {
 
         this.ctx.fillStyle = "white"
-        this.ctx.fillText(`SCORE: `, 20, 60)
+        this.ctx.fillText(`SCORE: ${this.points}`, 20, 60)
         this.ctx.font = "30px 'Fixedsys Excelsior 3.01'"
 
         this.ctx.fillText("LIVES:", 230, 60)

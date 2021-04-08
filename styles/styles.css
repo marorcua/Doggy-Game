@@ -47,5 +47,12 @@ body button {
     float: left;
     padding: 1px 0px;
 }
+.invisible{
+  opacity: 0.5;
+}
+.visible{
+  opacity: 1;
+}
+
 
 

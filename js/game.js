@@ -39,7 +39,9 @@ const doggyApp = {
     puppyPointsCounter: [0],
     pointsCount: 450,
 
+  
     init() {
+
         this.canvas = document.getElementById("myCanvas")
         this.ctx = this.canvas.getContext("2d")
 
@@ -47,6 +49,7 @@ const doggyApp = {
         this.createBoardGame()
         this.drawLives2()
         this.createObstacle()
+        this.addAudio()
         this.createObstacleTruck()
         this.createDoggy()
         this.drawSuccess()
@@ -54,6 +57,7 @@ const doggyApp = {
         this.start()
 
     },
+  
 
     setDimensions() {
         this.canvasSize.w = 600
@@ -262,8 +266,15 @@ const doggyApp = {
     },
 
     loseLives() {
-        this.livesCounter++
-        this.livesCounter === 7 ? this.gameOver() : this.gameRestart()
+        clearInterval(this.interval)
+
+        dogCrying.play()
+
+        setTimeout(()=>{
+            this.livesCounter++
+            this.livesCounter === 7 ? this.gameOver() : this.gameRestart()
+
+        }, 1000)
 
     },
 
@@ -339,13 +350,17 @@ const doggyApp = {
             }
 
             else {
+                dogCrying.play()
                 this.loseLives()
+               
             }
 
             //estas en zona carretera
         } else if (this.isCollisionVehicle()) {
             console.log("te mueres");
-            //this.loseLives()
+            carCrash.play()
+            dogCrying.play()
+            this.loseLives()
 
         }
 
@@ -368,6 +383,7 @@ const doggyApp = {
                     && (550 + 60) > (this.doggy.doggyPositionX + 20)))
 
         ) {
+            dogCrying.play()
             this.loseLives()
         }
 
@@ -387,7 +403,7 @@ const doggyApp = {
                     this.puppiesArray[0] = puppy1
                     this.puppyPointsCounter.push(this.pointsCount)
                     this.createPointer()
-
+                    barkSound.play()
                 }
 
             } else if (150 < (this.doggy.doggyPositionX) &&
@@ -396,6 +412,7 @@ const doggyApp = {
                     this.puppiesArray[1] = puppy2
                     this.puppyPointsCounter.push(this.pointsCount)
                     this.createPointer()
+                    barkSound.play()
 
                 }
 
@@ -405,7 +422,7 @@ const doggyApp = {
                     this.puppiesArray[2] = puppy3
                     this.puppyPointsCounter.push(this.pointsCount)
                     this.createPointer()
-
+                    barkSound.play()
                 }
 
             } else if (390 < (this.doggy.doggyPositionX) &&
@@ -414,7 +431,7 @@ const doggyApp = {
                     this.puppiesArray[3] = puppy4
                     this.puppyPointsCounter.push(this.pointsCount)
                     this.createPointer()
-
+                    barkSound.play()
                 }
 
             } else if (500 < (this.doggy.doggyPositionX) &&
@@ -423,6 +440,7 @@ const doggyApp = {
                     this.puppiesArray[4] = puppy5
                     this.puppyPointsCounter.push(this.pointsCount)
                     this.createPointer()
+                    barkSound.play()
                 }
             }
 
@@ -549,5 +567,16 @@ const doggyApp = {
         this.createDoggy()
     },
 
+    addAudio(){
+        barkSound = new Audio('audios/ladrido.mp3')
+        dogCrying = new Audio('audios/perro-llorando2.mov')
+        carCrash = new Audio('audios/car-crash2.mov')
+    },
+      preInit() {
+        // clearInterval(this.interval)
+        // this.init()
+        // clearTimeout()
+        clearInterval(this.interval)
 
+    }
 }

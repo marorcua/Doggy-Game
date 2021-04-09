@@ -39,7 +39,7 @@ const doggyApp = {
     puppyPointsCounter: [0],
     pointsCount: 450,
 
-  
+
     init() {
 
         this.canvas = document.getElementById("myCanvas")
@@ -57,7 +57,7 @@ const doggyApp = {
         this.start()
 
     },
-  
+
 
     setDimensions() {
         this.canvasSize.w = 600
@@ -270,7 +270,7 @@ const doggyApp = {
 
         dogCrying.play()
 
-        setTimeout(()=>{
+        setTimeout(() => {
             this.livesCounter++
             this.livesCounter === 7 ? this.gameOver() : this.gameRestart()
 
@@ -326,12 +326,10 @@ const doggyApp = {
 
     isCollisionWater() {
         return (this.doggy.doggyPositionY + this.doggy.scaledHeight < 335 &&
-            this.doggy.doggyPositionY + this.doggy.scaledHeight > 145)
+            this.doggy.doggyPositionY + this.doggy.scaledHeight > 165)
     },
 
     collision() {
-        //si funcionan arrastrar efectos dentro del if
-
         //1: estas en zona agua o en zona carretera
         if (this.levelCounter > 0 && this.isCollisionWater()) {
 
@@ -352,7 +350,8 @@ const doggyApp = {
             else {
                 dogCrying.play()
                 this.loseLives()
-               
+                console.log("water");
+
             }
 
             //estas en zona carretera
@@ -397,7 +396,7 @@ const doggyApp = {
         const puppy5 = new Puppy(this.ctx, this.canvas, this.canvasSize, this.frameCount, this.currentLoopIndex, 150, 200, 510, 105)
 
         if ((90 + 20) > (this.doggy.doggyPositionY + 10)) {
-            if (55 < (this.doggy.doggyPositionX) &&
+            if (50 < (this.doggy.doggyPositionX) &&
                 90 > (this.doggy.doggyPositionX)) {
                 if (this.puppiesArray[0] === 0) {
                     this.puppiesArray[0] = puppy1
@@ -425,7 +424,7 @@ const doggyApp = {
                     barkSound.play()
                 }
 
-            } else if (390 < (this.doggy.doggyPositionX) &&
+            } else if (380 < (this.doggy.doggyPositionX) &&
                 440 > (this.doggy.doggyPositionX + 30)) {
                 if (this.puppiesArray[3] === 0) {
                     this.puppiesArray[3] = puppy4
@@ -434,7 +433,7 @@ const doggyApp = {
                     barkSound.play()
                 }
 
-            } else if (500 < (this.doggy.doggyPositionX) &&
+            } else if (490 < (this.doggy.doggyPositionX) &&
                 550 > (this.doggy.doggyPositionX + 30)) {
                 if (this.puppiesArray[4] === 0) {
                     this.puppiesArray[4] = puppy5
@@ -481,25 +480,26 @@ const doggyApp = {
 
     gameOver() {
 
-        //clearInterval(this.interval)
-        //this.gameOverScreen()
+        clearInterval(this.interval)
+        this.gameOverScreen()
+
+        setTimeout(() => {
+            document.getElementById("game-board").classList.add("invisible")
+            this.init
+        }, 2000)
     },
 
     gameOverScreen() {
-        let counter = 0
+        this.ctx.fillStyle = "black"
+        this.ctx.fillRect(0, 0, this.canvasSize.w, this.canvasSize.h)
 
-        while (counter <= (1000 / this.FPS * 6)) {
-            console.log(counter);
+        this.ctx.font = "50px 'Fixedsys Excelsior 3.01'"
+        this.ctx.fillStyle = "white"
+        this.ctx.fillText("Game Over", this.canvasSize.w / 2 - 120, this.canvasSize.h / 2)
 
-            this.ctx.fillStyle = "black"
-            this.ctx.fillRect(0, 0, this.canvasSize.w, this.canvasSize.h)
-
-            this.ctx.font = "50px 'Fixedsys Excelsior 3.01'"
-            this.ctx.fillStyle = "white"
-            this.ctx.fillText("Game Over", this.canvasSize.w / 2 - 120, this.canvasSize.h / 2)
-
-            counter++
-        }
+        this.ctx.font = "35px 'Fixedsys Excelsior 3.01'"
+        this.ctx.fillStyle = "white"
+        this.ctx.fillText(`Final Score: ${this.finalScore()}`, this.canvasSize.w / 2 - 130, this.canvasSize.h / 2 + 70)
 
     },
 
@@ -512,7 +512,7 @@ const doggyApp = {
 
         this.ctx.font = "50px 'Fixedsys Excelsior 3.01'"
         this.ctx.fillStyle = "white"
-        this.ctx.fillText("LEVEL 2", this.canvasSize.w / 2 - 100, this.canvasSize.h / 2)
+        this.ctx.fillText(`LEVEL ${this.levelCounter + 1}`, this.canvasSize.w / 2 - 100, this.canvasSize.h / 2)
 
         setTimeout(() => {
             this.doggyBoardGame = new levelTwo(this.ctx, this.canvas, this.canvasSize)
@@ -533,7 +533,7 @@ const doggyApp = {
         this.frameCount = 0
         this.puppiesArray = [0, 0, 0, 0, 0]
         this.gameFramesCount = 0
-        this.pointsCount = 0
+        this.pointsCount = 450
         this.doggy = undefined
 
     },
@@ -543,9 +543,13 @@ const doggyApp = {
         this.pointsCount >= 0 ? this.pointsCount-- : null
     },
 
+    finalScore() {
+        return this.puppyPointsCounter.reduce((accumulator, currentValue) => accumulator + currentValue)
+    },
+
     createPointer() {
         //console.log(this.puppyPointsCounter);
-        document.querySelector(".score").innerHTML = `Puppy Score: ${this.puppyPointsCounter.reduce((accumulator, currentValue) => accumulator + currentValue)}`
+        document.querySelector(".score").innerHTML = `Puppy Score: ${this.finalScore()}`
         console.log(this.puppyPointsCounter);
         let ind = this.puppyPointsCounter.length - 1
         let elm = this.puppyPointsCounter[ind]
@@ -567,12 +571,12 @@ const doggyApp = {
         this.createDoggy()
     },
 
-    addAudio(){
+    addAudio() {
         barkSound = new Audio('audios/ladrido.mp3')
         dogCrying = new Audio('audios/perro-llorando2.mov')
         carCrash = new Audio('audios/car-crash2.mov')
     },
-      preInit() {
+    preInit() {
         // clearInterval(this.interval)
         // this.init()
         // clearTimeout()

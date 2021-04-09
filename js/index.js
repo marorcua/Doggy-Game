@@ -1,14 +1,15 @@
 window.onload = function () {
     doggyApp.init()
-    setTimeout(function(){
+    setTimeout(function () {
         doggyApp.preInit()
-    },50)
+    }, 60)
     const button = document.getElementById("start-button")
     console.log(button);
     button.onclick = () => {
-        console.log("hola");
-        document.querySelector(".invisible").classList.remove("invisible")
-        
+
+        document.getElementById("game-board").classList.remove("invisible")
+
+        doggyApp.reset()
         doggyApp.init()
     }
 }
